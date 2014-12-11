@@ -1,0 +1,25 @@
+{
+  "name": "SpaceJukebox",
+  "version": "0.0.1",
+  "authors": [
+    "Christophe Massolin <christophe.massolin@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/vendors",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pixi.js": "~2.1",
+    "threejs": "*",
+    "soundmanager2": "*"
+  },
+  "devDependencies": {
+    "stats.js": "*"
+  }
+}

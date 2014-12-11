@@ -1,0 +1,19 @@
+{
+    "base" : {
+        "src"    : "./app/assets/",
+        "dest"   : "./public/",
+        "bower"  : "./public/vendors/"
+    },
+    "styles" : {
+        "src"  : "./app/assets/styles/",
+        "dest" : "./public/styles/"
+    },
+    "scripts" : {
+        "src"  : "./app/assets/scripts/",
+        "dest" : "./public/scripts/"
+    },
+    "images" : {
+        "src"  : "./app/assets/images/",
+        "dest" : "./public/images/"
+    }
+}
