@@ -15,9 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "pixi.js": "~2.1",
-    "threejs": "*",
-    "soundmanager2": "*"
+    "threejs": "*"
   },
   "devDependencies": {
     "stats.js": "*"

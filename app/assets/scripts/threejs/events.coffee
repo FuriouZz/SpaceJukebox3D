@@ -1,8 +1,8 @@
-SPACESHIP = {}
-SPACESHIP.__defineGetter__('IDLE', -> return 'IDLE')
-SPACESHIP.__defineGetter__('LAUNCHED', -> return 'LAUNCHED')
-SPACESHIP.__defineGetter__('IN_LOOP', -> return 'IN_LOOP')
-SPACESHIP.__defineGetter__('ARRIVED', -> return 'ARRIVED')
+# SPACESHIP = {}
+# SPACESHIP.__defineGetter__('IDLE', -> return 'IDLE')
+# SPACESHIP.__defineGetter__('LAUNCHED', -> return 'LAUNCHED')
+# SPACESHIP.__defineGetter__('IN_LOOP', -> return 'IN_LOOP')
+# SPACESHIP.__defineGetter__('ARRIVED', -> return 'ARRIVED')
 
 JUKEBOX = {}
 JUKEBOX.__defineGetter__('TRACK_ON_ADD', -> return new Event('jukebox_track_on_add') )

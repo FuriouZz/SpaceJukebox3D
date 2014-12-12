@@ -1,6 +1,6 @@
 SPACE = SPACE || {}
 
-SPACE.ENV        = 'development'
+SPACE.ENV        = 'production'
 
 # PIXI.JS
 SPACE.FPS        = 60
@@ -19,7 +19,7 @@ SPACE.SOUNDCLOUD =
 # METHODS
 SPACE.LOG        = (log)->
   unless /(prod|production)/.test(SPACE.ENV)
-      time = (new Date()).toTimeString() 
+      time = (new Date()).toTimeString()
       console.log(time+' '+log)
 
 SPACE.ASSERT     = (condition, action)->

@@ -19,7 +19,7 @@ class SPACE.SceneManager
     @_camera.position.setZ(500)
 
     @_renderer = new THREE.WebGLRenderer({antialias: true})
-    @_renderer.setClearColor(new THREE.Color(0xe42a79))
+    @_renderer.setClearColor(new THREE.Color(0xFFF0DB))
     @_renderer.setSize(window.innerWidth, window.innerHeight)
     @_renderer.shadozMapEnabled = true
     @_renderer.shadozMapSoft    = true
@@ -45,7 +45,7 @@ class SPACE.SceneManager
     document.body.appendChild( @_stats.domElement )
 
   _render: =>
-    SPACE.ASSERT(SPACE.ENV == 'development', @_stats.begin)
+    @_stats.begin() if SPACE.ENV == 'development'
     window.requestAnimationFrame(@_render)
 
     if !@currentScene or @currentScene.isPaused()
@@ -53,8 +53,7 @@ class SPACE.SceneManager
 
     @_renderer.render( @currentScene, @_camera )
 
-    SPACE.ASSERT(SPACE.ENV == 'development', @_stats.end)
-
+    @_stats.end() if SPACE.ENV == 'development'
 
   _update: =>
     setTimeout(@_update, 1000 / SPACE.FPS)
@@ -91,9 +90,9 @@ class SPACE.SceneManager
     # # triangleShape.lineTo(  40, 80 )
     # # triangleShape.lineTo( 120, 80 )
     # # triangleShape.lineTo(  80, 20 )
-    
+
     # # console.log triangleShape
-    
+
     # # geometry = new THREE.ShapeGeometry( triangleShape )
     # # mat      = new THREE.MeshBasicMaterial( {color: 0x00ff00, side: THREE.DoubleSide} )
     # # @tr       = new THREE.Mesh(geometry, mat)

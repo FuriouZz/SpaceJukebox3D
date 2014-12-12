@@ -19,6 +19,9 @@ class SPACE.Equalizer extends THREE.Group
   radius:            0
   interpolationTime: 0
   color:             0xFFFFFF
+  lineForceUp:       .5
+  lineForceDown:     .5
+  absolute:          false
 
   constructor: (point, opts={})->
     super
@@ -28,15 +31,21 @@ class SPACE.Equalizer extends THREE.Group
       maxLength:         200
       minLength:         50
       radius:            250
-      interpolationTime: 150
-      color:             0xFFFFFF
-    
+      interpolationTime: 100
+      color:             0xDE548E
+      lineForceUp:       .5
+      lineForceDown:     .5
+      absolute:          false
+
     opts               = HELPERS.merge(defaults, opts)
     @minLength         = opts.minLength
     @maxLength         = opts.maxLength
     @radius            = opts.radius
     @interpolationTime = opts.interpolationTime
     @color             = opts.color
+    @lineForceUp       = opts.lineForceUp
+    @lineForceDown     = opts.lineForceDown
+    @absolute          = opts.absolute
 
     # Set values
     @center     = point
@@ -49,15 +58,16 @@ class SPACE.Equalizer extends THREE.Group
   setValues: (values)->
     newValues = []
     for value in values
+      value = Math.abs(value) if @absolute
       length = @minLength + parseFloat(value)*(@maxLength - @minLength)
-      newValues.push(length)
+      newValues.push(Math.max(length, 0))
     @_newValues = newValues
-    @resetInterpolation()    
+    @resetInterpolation()
 
   generate: ->
     @mute()
 
-    @material   = new THREE.LineBasicMaterial({ color: @color, linewidth: 2 })
+    @material   = new THREE.LineBasicMaterial({ color: @color, linewidth: 4 })
     @lines      = []
 
     @update(0)
@@ -78,10 +88,10 @@ class SPACE.Equalizer extends THREE.Group
       angle  = Math.PI * 2 * i / (@_values.length)
 
       length = @_values[i]
-      radius = 250
+      radius = @radius
 
-      from = @calculate(@center, angle, radius-length*.5)
-      to   = @calculate(@center, angle, radius+length*.5)
+      from = @calculate(@center, angle, radius-length*@lineForceDown)
+      to   = @calculate(@center, angle, radius+length*@lineForceUp)
 
       if typeof @lines[i] == 'undefined'
         geometry = new THREE.Geometry()
@@ -99,14 +109,14 @@ class SPACE.Equalizer extends THREE.Group
 
   random: (setValues=true)=>
     values = []
-    for i in [0..255]
+    for i in [0..63]
       values[i] = Math.random()
     @setValues(values) if setValues
     return values
 
   mute: (setValues=true)->
     values = []
-    for i in [0..255]
+    for i in [0..63]
       values[i] = 0
     @setValues(values) if setValues
 

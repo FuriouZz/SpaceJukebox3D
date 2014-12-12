@@ -1,15 +1,19 @@
 class SPACE.SoundCloud
+
+  token: null
+
   constructor: (id)->
     SC.initialize({
       client_id: id
-      redirect_uri: 'http://localhost:3000'
+      redirect_uri: 'http://localhost:3000/plouf.html'
     })
 
-    # # IF NO TOKEN
-    # SC.connect(->
-    #   # 1-31329-11457116-c5b96945c5e7e7c
-    #   console.log SC.accessToken()
-    # )
+    if (document.cookie.replace(/(?:(?:^|.*;\s*)soundcloud_connected\s*\=\s*([^;]*).*$)|^.*$/, "$1") != "true")
+      SC.connect(->
+        token = SC.accessToken()
+      )
+    else
+      @token = document.cookie.replace(/(?:(?:^|.*;\s*)soundcloud_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
 
   pathOrUrl: (path, callback)->
     # Verify if it's an ID or an URL
@@ -30,11 +34,11 @@ class SPACE.SoundCloud
   streamSound: (object, callback, events={})->
     if object and object.hasOwnProperty('kind')
       path = object.uri.replace('https://api.soundcloud.com', '')
-      SC.stream(path+'?token=1-31329-11457116-c5b96945c5e7e7c', {
+      SC.stream(path, {
         autoPlay: true
         # useEQData: true
         useWaveformData: true
-        # usePeakData: true
+        usePeakData: true
         whileplaying : events.whileplaying
         onplay       : events.onplay
         onfinish     : events.onfinish
@@ -46,4 +50,9 @@ class SPACE.SoundCloud
     )
 
   get: (path, callback)->
-    SC.get(path+'?token=1-31329-11457116-c5b96945c5e7e7c', callback)
+    SC.get(path, callback)
+
+  getSoundUrl: (path, callback)->
+    @getSoundOrPlaylist(path, (sound)=>
+      callback(sound.stream_url+'?oauth_token='+@token)
+    )

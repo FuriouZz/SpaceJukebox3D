@@ -1,0 +1,18 @@
+La fenêtre va se fermer dans 5 secondes...
+
+<script>
+    var hash = location.hash.substr(1).split('&')
+    var results = {}
+    for (var i in hash) {
+        var keyvalue = hash[i].split('=')
+        var key      = keyvalue[0]
+        var value    = keyvalue[1]
+
+        results[key] = value
+    }
+
+    document.cookie = "soundcloud_token=" + results.access_token
+    document.cookie = "soundcloud_connected=true"
+
+    setTimeout(window.close, 5000)
+</script>

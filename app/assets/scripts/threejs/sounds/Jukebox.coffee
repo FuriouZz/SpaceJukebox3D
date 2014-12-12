@@ -14,6 +14,18 @@ class SPACE.Jukebox
   constructor: ->
     @SC = new SPACE.SoundCloud(SPACE.SOUNDCLOUD.id)
 
+    # @SC.getSoundUrl('https://soundcloud.com/chonch-2/mouais', (url)->
+    #   dancer = new Dancer()
+
+    #   # Using an audio object
+    #   a = new Audio()
+    #   a.src = url
+    #   dancer.load( a )
+    #   dancer.play()
+    # )
+
+    @add('https://soundcloud.com/chonch-2/mouais')
+
     @playlist = []
     @_events()
 
@@ -98,6 +110,17 @@ class SPACE.Jukebox
       onstop       : @_onstop
       whileplaying : @whileplaying
     })
+
+    # dancer = new Dancer()
+
+    # # Using an audio object
+    # a = new Audio()
+    # a.src = @current.data.stream_url+'?oauth_token='+@SC.token
+    # dancer.load( a )
+    # dancer.play()
+    # @_onplay()
+
+    # @current.sound = dancer
 
   _starting: (sound)=>
     @current.sound = sound
