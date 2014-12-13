@@ -1,6 +1,6 @@
 SPACE = SPACE || {}
 
-SPACE.ENV        = 'production'
+SPACE.ENV        = 'development'
 
 # PIXI.JS
 SPACE.FPS        = 60

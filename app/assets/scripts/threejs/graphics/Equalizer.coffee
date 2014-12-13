@@ -31,7 +31,7 @@ class SPACE.Equalizer extends THREE.Group
       maxLength:         200
       minLength:         50
       radius:            250
-      interpolationTime: 100
+      interpolationTime: 150
       color:             0xDE548E
       lineForceUp:       .5
       lineForceDown:     .5
@@ -90,8 +90,8 @@ class SPACE.Equalizer extends THREE.Group
       length = @_values[i]
       radius = @radius
 
-      from = @calculate(@center, angle, radius-length*@lineForceDown)
-      to   = @calculate(@center, angle, radius+length*@lineForceUp)
+      from = @computePosition(@center, angle, radius-length*@lineForceDown)
+      to   = @computePosition(@center, angle, radius+length*@lineForceUp)
 
       if typeof @lines[i] == 'undefined'
         geometry = new THREE.Geometry()
@@ -128,7 +128,7 @@ class SPACE.Equalizer extends THREE.Group
       for i in [(@_oldValues.length)..(@_newValues.length-1)]
         @_oldValues[i] = 0
 
-  calculate: (point, angle, length)->
+  computePosition: (point, angle, length)->
     x = point.x + Math.sin(angle) * length
     y = point.y + Math.cos(angle) * length
     return new THREE.Vector3(x, y, point.z)
