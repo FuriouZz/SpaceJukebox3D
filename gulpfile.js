@@ -39,23 +39,15 @@ gulp.task('coffee', function() {
 })
 
 gulp.task('watch', ['sass', 'coffee'], function(){
-    gulp.watch(paths.styles.src+'**/*.{scss,sass}', ['sass'])
-    gulp.watch(paths.scripts.src+'**/*.coffee',     ['coffee'])
+    gulp.watch(paths.styles.src+'**/*.{scss,sass}', ['sass', reload])
+    gulp.watch(paths.scripts.src+'**/*.coffee',     ['coffee', reload])
     gulp.watch('**/*.html', {cwd: paths.base.dest}, reload)
-
-    gulp.watch(paths.base.dest+'/**/**', function(file){
-        if (file.type === 'changed')
-            browserSync.reload(file.path)
-    })
 })
 
 gulp.task('serve', function(){
     browserSync({
         open: false,
-        server: {
-            host: hostname,
-            baseDir: paths.base.dest
-        },
+        proxy: 'spacejukebox.dev',
         watchOptions: {
             debounceDelay: 1000
         },
@@ -67,4 +59,4 @@ gulp.task('bower', function(){
     return gp.bower('public/vendors')
 })
 
-gulp.task('default', ['serve', 'watch']);
+gulp.task('default', ['serve','watch']);
