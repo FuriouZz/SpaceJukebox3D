@@ -15,19 +15,20 @@ class SPACE.MainScene extends SPACE.Scene
       radius: 200
       absolute: false
       lineForceDown: .5
-      lineForceUp: .5
+      lineForceUp: 1
 
     @equalizer = new SPACE.Equalizer(middlePoint, options)
     @add(@equalizer)
 
     @jukebox = new SPACE.Jukebox()
     @jukebox.whileplaying = @_whileplaying
-    @jukebox.predefinedPlaylist()
+    # @jukebox.predefinedPlaylist()
 
     @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
     @add(@spaceship)
 
     @setupSomething()
+
 
     @waveformData = {}
 
@@ -48,15 +49,27 @@ class SPACE.MainScene extends SPACE.Scene
     # @addChild(@dotted)
 
   setupSomething: ->
-    # Cube
-    g = new THREE.BoxGeometry(100, 100, 100)
-    m = new THREE.MeshLambertMaterial({ color: 0x0088ff, shading: THREE.FlatShading })
-    @cube = new THREE.Mesh(g, m)
-    # @cube.position.setZ(100)
-    @cube.rotation.set(Math.random(), Math.random(), Math.random())
-    @cube.castShadow = true
-    @cube.receiveShadow = true
-    @add(@cube)
+    # # Cube
+    # g = new THREE.BoxGeometry(100, 100, 100)
+    # m = new THREE.MeshLambertMaterial({ color: 0x0088ff, shading: THREE.FlatShading })
+    # @cube = new THREE.Mesh(g, m)
+    # # @cube.position.setZ(100)
+    # @cube.rotation.set(Math.random(), Math.random(), Math.random())
+    # @cube.castShadow = true
+    # @cube.receiveShadow = true
+    # @add(@cube)
+
+    g = new THREE.SphereGeometry()
+    m = new THREE.MeshLambertMaterial({ color: 0xFFAA22 })
+    circle = new THREE.Mesh(g, m)
+    circle.castShadow = true
+    circle.receiveShadow = true
+    @add(circle)
+
+    circle.update = ->
+      @rotation.x += .01
+      @rotation.y -= .01
+      @rotation.z += .01
 
     light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.2 )
     light.position.set( 500, 500, 500 )
@@ -113,28 +126,25 @@ class SPACE.MainScene extends SPACE.Scene
     # helper = new THREE.SpotLightHelper(light, 1)
     # @add(helper)
 
-    speed =
-      x: Math.random() * 0.005
-      y: Math.random() * 0.005
-      z: Math.random() * 0.005
+    # speed =
+    #   x: Math.random() * 0.005
+    #   y: Math.random() * 0.005
+    #   z: Math.random() * 0.005
 
-    @cube.update = ->
-      @rotation.x += speed.x
-      @rotation.y += speed.y
-      @rotation.z += speed.z
+    # @cube.update = ->
+    #   @rotation.x += speed.x
+    #   @rotation.y += speed.y
+    #   @rotation.z += speed.z
 
-  time: 0
   update: (delta)->
     super(delta)
     @jukebox.update(delta)
 
-    @time += delta
-
-    if @jukebox.state == SPACE.Jukebox.IS_PLAYING
-      if @jukebox.current and @jukebox.current.sound.paused
-        @equalizer.mute()
-      else if @waveformData.hasOwnProperty('mono')
-        @equalizer.setValues(@waveformData.mono)
+    # if @jukebox.state == SPACE.Jukebox.IS_PLAYING
+    #   if @jukebox.current and @jukebox.current.sound.paused
+    #     @equalizer.mute()
+    #   else if @waveformData.hasOwnProperty('mono')
+    #     @equalizer.setValues(@waveformData.mono)
 
       # if !@jukebox.current.sound.isPlaying()
       #   @equalizer.mute()
@@ -155,7 +165,13 @@ class SPACE.MainScene extends SPACE.Scene
     datas = Array(256)
     for i in [0..127]
       value = Math.max(sound.waveformData.left[i], sound.waveformData.right[i])
-      datas[i] = datas[255-i] = value * Math.max(sound.peakData.left, sound.peakData.left)
+      # datas[i] = datas[255-i] = value * Math.max(sound.peakData.left, sound.peakData.left)
+      datas[i] = datas[255-i] = value
+
+    if @jukebox.current and @jukebox.current.sound.paused
+      @equalizer.mute()
+    else if @waveformData.hasOwnProperty('mono')
+      @equalizer.setValues(@waveformData.mono)
 
     @waveformData.mono   = datas
     @waveformData.stereo = sound.waveformData

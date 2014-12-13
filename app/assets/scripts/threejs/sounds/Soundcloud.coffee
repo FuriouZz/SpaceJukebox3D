@@ -5,7 +5,7 @@ class SPACE.SoundCloud
   constructor: (id)->
     SC.initialize({
       client_id: id
-      redirect_uri: 'http://localhost:3000/plouf.html'
+      redirect_uri: 'http://spacejukebox.dev/plouf.html'
     })
 
     if (document.cookie.replace(/(?:(?:^|.*;\s*)soundcloud_connected\s*\=\s*([^;]*).*$)|^.*$/, "$1") != "true")
@@ -38,7 +38,9 @@ class SPACE.SoundCloud
         autoPlay: true
         # useEQData: true
         useWaveformData: true
-        usePeakData: true
+        # usePeakData: true
+        useHTML5audio: true
+        preferFlash: false
         whileplaying : events.whileplaying
         onplay       : events.onplay
         onfinish     : events.onfinish

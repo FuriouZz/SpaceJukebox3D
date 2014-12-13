@@ -14,18 +14,6 @@ class SPACE.Jukebox
   constructor: ->
     @SC = new SPACE.SoundCloud(SPACE.SOUNDCLOUD.id)
 
-    # @SC.getSoundUrl('https://soundcloud.com/chonch-2/mouais', (url)->
-    #   dancer = new Dancer()
-
-    #   # Using an audio object
-    #   a = new Audio()
-    #   a.src = url
-    #   dancer.load( a )
-    #   dancer.play()
-    # )
-
-    @add('https://soundcloud.com/chonch-2/mouais')
-
     @playlist = []
     @_events()
 
@@ -47,7 +35,8 @@ class SPACE.Jukebox
       # 'https://soundcloud.com/chonch-2/cacaco-2'
       # 'https://soundcloud.com/chonch-2/duodenum'
       # 'https://soundcloud.com/chonch-2/little-green-monkey'
-      'https://soundcloud.com/huhwhatandwhere/sets/supreme-laziness-the-celestics'
+      # 'https://soundcloud.com/huhwhatandwhere/sets/supreme-laziness-the-celestics'
+      'https://soundcloud.com/takugotbeats/sets/25-nights-for-nujabes'
       # 'https://soundcloud.com/tommisch/sets/tom-misch-soulection-white'
       # 'https://soundcloud.com/professorkliq/sets/trackmania-valley-ost'
       # 'https://soundcloud.com/professorkliq/sets/trackmania-stadium-ost'
@@ -75,7 +64,7 @@ class SPACE.Jukebox
     @SC.getSoundOrPlaylist(soundOrPlaylist, (o)=>
       tracks = null
       if o.hasOwnProperty('tracks')
-        tracks = o.tracks
+        tracks = HELPERS.shuffle(o.tracks)
       else
         tracks = []
         tracks.push(o)
@@ -111,19 +100,9 @@ class SPACE.Jukebox
       whileplaying : @whileplaying
     })
 
-    # dancer = new Dancer()
-
-    # # Using an audio object
-    # a = new Audio()
-    # a.src = @current.data.stream_url+'?oauth_token='+@SC.token
-    # dancer.load( a )
-    # dancer.play()
-    # @_onplay()
-
-    # @current.sound = dancer
-
   _starting: (sound)=>
     @current.sound = sound
+    sound.mute()
 
   _onplay: =>
     HELPERS.trigger(JUKEBOX.IS_PLAYING)
@@ -136,5 +115,3 @@ class SPACE.Jukebox
     @eq.mute()
     HELPERS.trigger(JUKEBOX.IS_STOPPED)
     @setState(SPACE.Jukebox.IS_STOPPED)
-
-SPACE.Jukebox.__defineGetter__('IS_PLAYING', -> return 'IS_PLAYING')
