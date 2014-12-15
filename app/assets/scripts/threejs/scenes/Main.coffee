@@ -22,13 +22,12 @@ class SPACE.MainScene extends SPACE.Scene
 
     @jukebox = new SPACE.Jukebox()
     @jukebox.whileplaying = @_whileplaying
-    # @jukebox.predefinedPlaylist()
+    @jukebox.predefinedPlaylist()
 
     @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
     @add(@spaceship)
 
     @setupSomething()
-
 
     @waveformData = {}
 
@@ -36,6 +35,7 @@ class SPACE.MainScene extends SPACE.Scene
 
   _events: ->
     document.addEventListener(JUKEBOX.TRACK_ON_ADD.type, @_eTrackOnAdd)
+    document.addEventListener(JUKEBOX.IS_STOPPED.type, @_eJukeboxIsStopped)
 
   _eTrackOnAdd: (e)=>
     # spaceship = new SPACE.Spaceship(@equalizer.center, @equalizer.radius)
@@ -43,10 +43,13 @@ class SPACE.MainScene extends SPACE.Scene
 
     track = e.object.track
     track.spaceship = null#spaceship
-    HELPERS.trigger(JUKEBOX.TRACK_ADDED, { track: track })
+    _H.trigger(JUKEBOX.TRACK_ADDED, { track: track })
 
     # @dotted = new SPACE.DottedLine(track)
     # @addChild(@dotted)
+
+  _eJukeboxIsStopped: (e)=>
+    @equalizer.mute()
 
   setupSomething: ->
     # # Cube

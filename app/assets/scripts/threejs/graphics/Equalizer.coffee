@@ -37,7 +37,7 @@ class SPACE.Equalizer extends THREE.Group
       lineForceDown:     .5
       absolute:          false
 
-    opts               = HELPERS.merge(defaults, opts)
+    opts               = _Coffee.merge(defaults, opts)
     @minLength         = opts.minLength
     @maxLength         = opts.maxLength
     @radius            = opts.radius

@@ -25,7 +25,7 @@ class SPACE.Jukebox
     track.pendingDuration = @_calcPending(@playlist.length-1)
     @playlist.push(e.object.track)
 
-    # @playlist = HELPERS.shuffle(@playlist)
+    # @playlist = _Coffee.shuffle(@playlist)
     SPACE.LOG('Sound added: ' + e.object.track.data.title)
 
   predefinedPlaylist: ->
@@ -42,7 +42,7 @@ class SPACE.Jukebox
       # 'https://soundcloud.com/professorkliq/sets/trackmania-stadium-ost'
     ]
 
-    list = HELPERS.shuffle(list)
+    list = _Coffee.shuffle(list)
     for url in list
       @add(url)
 
@@ -61,18 +61,17 @@ class SPACE.Jukebox
     return list
 
   add: (soundOrPlaylist)->
-    @SC.getSoundOrPlaylist(soundOrPlaylist, (o)=>
+    @SC.getSoundOrPlaylist soundOrPlaylist, (o)=>
       tracks = null
       if o.hasOwnProperty('tracks')
-        tracks = HELPERS.shuffle(o.tracks)
+        tracks = _Coffee.shuffle(o.tracks)
       else
         tracks = []
         tracks.push(o)
 
       for data in tracks
         track = new SPACE.Track(data)
-        HELPERS.trigger(JUKEBOX.TRACK_ON_ADD, { track: track })
-    )
+        _H.trigger(JUKEBOX.TRACK_ON_ADD, { track: track })
 
   _calcPending: (position)->
     duration = 0
@@ -105,13 +104,12 @@ class SPACE.Jukebox
     sound.mute()
 
   _onplay: =>
-    HELPERS.trigger(JUKEBOX.IS_PLAYING)
+    _H.trigger(JUKEBOX.IS_PLAYING)
     @setState(SPACE.Jukebox.IS_PLAYING)
 
   _onfinish: =>
     @current.sound.stop()
     @current.sound.destruct()
     @current = null
-    @eq.mute()
-    HELPERS.trigger(JUKEBOX.IS_STOPPED)
+    _H.trigger(JUKEBOX.IS_STOPPED)
     @setState(SPACE.Jukebox.IS_STOPPED)

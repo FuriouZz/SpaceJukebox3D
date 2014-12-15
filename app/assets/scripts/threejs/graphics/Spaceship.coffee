@@ -1,6 +1,14 @@
 class SPACE.Spaceship extends THREE.Group
 
+  time: 0
+
+  ship: null
+  path: null
+  duration: 0
+
   state: null
+
+  angle: 0
 
   # STATES
   @IDLE:     'IDLE'
@@ -19,14 +27,17 @@ class SPACE.Spaceship extends THREE.Group
 
     @generate()
 
+    # setTimeout(=>
+    #   @setState(SPACE.Spaceship.LAUNCHED)
+    # , 5000)
+
   computePosition: (point, angle, length)->
     x = point.x + Math.sin(angle) * length
     y = point.y + Math.cos(angle) * length
     return new THREE.Vector3(x, y, point.z)
 
   generate: ->
-
-
+    # Create spaceship geometry
     g = new THREE.Geometry()
     g.vertices.push(
       new THREE.Vector3(  0, -52.5, -10)
@@ -43,66 +54,133 @@ class SPACE.Spaceship extends THREE.Group
       new THREE.Face3(5, 4, 3)
     )
     g.computeFaceNormals()
-
-    m = new THREE.MeshLambertMaterial({ color: 0x0088ff, side: THREE.DoubleSide })
-
-    ship = new THREE.Mesh(g, m)
     matrix = new THREE.Matrix4()
     matrix.makeRotationX(Math.PI*.5)
-    ship.geometry.applyMatrix(matrix)
+    g.applyMatrix(matrix)
     matrix.makeRotationZ(Math.PI)
-    ship.geometry.applyMatrix(matrix)
-    ship.castShadow = true
-    ship.receiveShadow = true
-    @add(ship)
+    g.applyMatrix(matrix)
 
-    # Follow a spline
-    `
-    THREE.Curves = {};
+    @ship = THREE.SceneUtils.createMultiMaterialObject( g, [
+      new THREE.MeshBasicMaterial({
+          color: 0x000000,
+          opacity: 0.3,
+          wireframe: true,
+          transparent: true
+      }),
+      new THREE.MeshLambertMaterial({ color: 0x0088ff, side: THREE.DoubleSide })
+    ])
+    @ship.castShadow = true
+    @ship.receiveShadow = true
+    @ship.scale.set(.1, .1, .1)
+    @add(@ship)
 
+    # # Follow a spline
+    # points = []
+    # points.push(
+    #   new THREE.Vector3(50, -50, 600),
+    #   new THREE.Vector3(125, 125, 125),
+    #   new THREE.Vector3(125, 0, 125),
+    #   new THREE.Vector3(0, 0, 0)
+    # )
 
-     THREE.Curves.GrannyKnot = THREE.Curve.create( function(){},
+    # pts       = []
+    # start     = (Math.PI * 2) * Math.random()
+    # radius    = 200
+    # minrad    = 0
+    # precision = 100
+    # for i in [0..(precision-1)]
+    #   t     = 1 - (i / (precision-1))
+    #   angle = t * Math.PI * 2
+    #   x = @target.x + Math.cos(angle) * (minrad + radius * t)
+    #   y = @target.y + Math.sin(angle) * (minrad + radius * t)
+    #   pts.push(new THREE.Vector3(x, y, 0))
 
-       function(t) {
-          t = 2 * Math.PI * t;
+    # curves = new THREE.CurvePath()
+    # for i in [0..(pts.length-1)] by 2
+    #   curves.add(new THREE.LineCurve3(pts[i], pts[i+1]))
 
-          var x = -0.22 * Math.cos(t) - 1.28 * Math.sin(t) - 0.44 * Math.cos(3 * t) - 0.78 * Math.sin(3 * t);
-          var y = -0.1 * Math.cos(2 * t) - 0.27 * Math.sin(2 * t) + 0.38 * Math.cos(4 * t) + 0.46 * Math.sin(4 * t);
-          var z = 0.7 * Math.cos(3 * t) - 0.4 * Math.sin(3 * t);
-          return new THREE.Vector3(x, y, z).multiplyScalar(20);
-      }
-    );
-    `
-    spline = new THREE.Curves.GrannyKnot()
-    g = new THREE.TubeGeometry(spline, 200, .25, 10, true)
+    # ## Create Incoming Curve
+    # incoming = new THREE.IncomingCurve(@target, 0, 200)
+    # incoming.inverse   = true
+    # incoming.useGolden = true
+    # incomingLength = incoming.getLength()
 
-    # tubeMesh = THREE.SceneUtils.createMultiMaterialObject( g, [
-    #   new THREE.MeshLambertMaterial({
-    #     color: 0x00FF88
-    #   }),
+    # ## Create Launched Curve
+    # points[points.length-1] = incoming.getPointAt(0)
+    # launched = _THREE.HermiteCurve(points)
+
+    # glaunched = new THREE.TubeGeometry(launched, 200, .5, 10, true)
+    # tube   = THREE.SceneUtils.createMultiMaterialObject( glaunched, [
     #   new THREE.MeshBasicMaterial({
-    #     color: 0x000000,
-    #     opacity: 0.3,
-    #     wireframe: true,
-    #     transparent: true
-    # })])
-    # tubeMesh.scale.set( 10, 10, 10 )
-    # @add(tubeMesh)
+    #       color: 0x000000,
+    #       opacity: 0.3,
+    #       wireframe: true,
+    #       transparent: true
+    #   }),
+    #   new THREE.MeshLambertMaterial({ color: 0xFF88FF, side: THREE.DoubleSide })
+    # ])
+    # @add(tube)
 
-    ship.scale.set(.5, .5, .5)
+    # gincoming = new THREE.TubeGeometry(incoming, 200, .5, 10, true)
+    # tube   = THREE.SceneUtils.createMultiMaterialObject( gincoming, [
+    #   new THREE.MeshBasicMaterial({
+    #       color: 0x000000,
+    #       opacity: 0.3,
+    #       wireframe: true,
+    #       transparent: true
+    #   }),
+    #   new THREE.MeshLambertMaterial({ color: 0xFF88FF, side: THREE.DoubleSide })
+    # ])
+    # @add(tube)
 
-    ship.update = =>
-      time = Date.now()
-      looptime = 20 * 1000
-      t = ( time % looptime ) / looptime
+    # circ = new THREE.Mesh(new THREE.CircleGeometry(10, 100), new THREE.MeshLambertMaterial({ color: 0xFF0000, side: THREE.DoubleSide }))
+    # circ.position.set(125, 125, 125)
+    # @add(circ)
 
-      pos = g.parameters.path.getPointAt( t )
-      pos.multiplyScalar( 10 )
-      ship.position.set(pos.x, pos.y, pos.z)
-      pos.multiplyScalar( 2 )
+    # circ = new THREE.Mesh(new THREE.CircleGeometry(10, 100), new THREE.MeshLambertMaterial({ color: 0xFF0000, side: THREE.DoubleSide }))
+    # circ.position.set(125, 0, 125)
+    # @add(circ)
 
-      pos = g.parameters.path.getPointAt( ( t + 10 / g.parameters.path.getLength() ) % 1 ).multiplyScalar( 10 )
-      ship.lookAt(pos)
+    # circ = new THREE.Mesh(new THREE.CircleGeometry(10, 100), new THREE.MeshLambertMaterial({ color: 0xFF0000, side: THREE.DoubleSide }))
+    # circ.position.set(0, 0, 0)
+    # @add(circ)
+
+
+
+    # time      = 0
+
+    # Launched State
+    # looptime  = 5 * 1000
+    # isLaunched = true
+    # pos = launched.getPointAt(0)
+    # ship.position.set(pos.x, pos.y, pos.z)
+    # path      = launched
+
+    # ship.update = (delta)=>
+    #   time += delta
+    #   t = time / looptime#( time % looptime ) / looptime
+    #   # console.log t
+
+    #   if t >= 1
+    #     time = 0
+    #     t = 0
+    #     isLaunched = !isLaunched
+    #     if isLaunched
+    #       console.log 'isLaunched'
+    #       looptime = 5 * 1000
+    #       path     = launched
+    #     else
+    #       console.log 'isNotLaunched'
+    #       looptime = 30 * 1000
+    #       path     = incoming
+
+    #   pos = path.getPointAt( t )
+    #   pos.multiplyScalar( 1 )
+    #   ship.position.set(pos.x, pos.y, pos.z)
+    #   pos.multiplyScalar( 1 )
+
+    #   pos = path.getPointAt( ( t + 10 / path.getLength() ) % 1 ).multiplyScalar( 1 )
+    #   ship.lookAt(pos)
 
     # ## Turn around 3D (~need improvement)
     # @position.set(250, 0, 0)
@@ -165,23 +243,68 @@ class SPACE.Spaceship extends THREE.Group
     switch state
       when SPACE.Spaceship.IDLE
         SPACE.LOG('IDLE')
+        @path = null
       when SPACE.Spaceship.LAUNCHED
         SPACE.LOG('LAUNCHED')
+        @path = @_generateLaunchedPath()
+        @duration = 5 * 1000
+
+        v = @path.getPoint(0)
+        @ship.position.set(v.x, v.y, v.z)
       when SPACE.Spaceship.IN_LOOP
         SPACE.LOG('IN_LOOP')
+        @path = @_generateInLoopPath()
+        @duration = 30 * 1000
+
+        v = @path.getPoint(0)
+        @ship.position.set(v.x, v.y, v.z)
       when SPACE.Spaceship.ARRIVED
         SPACE.LOG('ARRIVED')
+        @path = null
       else
         @setState(SPACE.Spaceship.IDLE)
 
-  forward: ->
+  update: (delta)->
+    if @state != SPACE.Spaceship.IDLE and @state != SPACE.Spaceship.ARRIVED
+      @time += delta
+      t = @time / @duration
 
-  backward: ->
+      if t >= 1
+        @time = 0
+        if @state == SPACE.Spaceship.LAUNCHED
+          @setState(SPACE.Spaceship.IN_LOOP)
+        else if @state == SPACE.Spaceship.IN_LOOP
+          @setState(SPACE.Spaceship.ARRIVED)
+        return
 
-  move: ->
+      @_progress(t)
 
-  update: ->
+  _progress: (t)->
+    v = @path.getPointAt(t)
+    @ship.position.set(v.x, v.y, v.z)
 
-  _updateInLoop: ->
+    ahead =  ( t + 10 / @path.getLength() ) % 1
+    v = @path.getPointAt(ahead).multiplyScalar( 1 )
+    @ship.lookAt(v)
 
-  _updateInLaunched: ->
+    if @state == SPACE.Spaceship.IN_LOOP
+      @ship.rotation.set(@ship.rotation.x, @ship.rotation.y, 0)
+
+  _generateLaunchedPath: ->
+    inloopPath = @_generateInLoopPath()
+
+    points = []
+    points.push(
+      new THREE.Vector3(50, -50, 600),
+      new THREE.Vector3(125, 125, 125),
+      new THREE.Vector3(125, 0, 125),
+      inloopPath.getPointAt(0)
+    )
+    path = _THREE.HermiteCurve(points)
+    return path
+
+  _generateInLoopPath: ->
+    path = new THREE.IncomingCurve(@target, @angle, 200)
+    path.inverse   = true
+    path.useGolden = true
+    return path

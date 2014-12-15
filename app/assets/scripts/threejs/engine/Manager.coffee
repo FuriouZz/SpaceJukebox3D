@@ -16,7 +16,9 @@ class SPACE.SceneManager
     @_scenes   = []
 
     @_camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    @_camera.position.setZ(500)
+    @_camera.position.setZ(600)
+    # @_camera.position.setY(500)
+    # @_camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     @_renderer = new THREE.WebGLRenderer({antialias: true})
     @_renderer.setClearColor(new THREE.Color(0xFFF0DB))
