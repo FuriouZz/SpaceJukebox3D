@@ -47,10 +47,62 @@ class SPACE.Spaceship extends THREE.Group
     m = new THREE.MeshLambertMaterial({ color: 0x0088ff, side: THREE.DoubleSide })
 
     ship = new THREE.Mesh(g, m)
-    ship.rotation.set(Math.PI*.5, Math.PI, Math.PI*.5)
+    matrix = new THREE.Matrix4()
+    matrix.makeRotationX(Math.PI*.5)
+    ship.geometry.applyMatrix(matrix)
+    matrix.makeRotationZ(Math.PI)
+    ship.geometry.applyMatrix(matrix)
     ship.castShadow = true
     ship.receiveShadow = true
     @add(ship)
+
+    # Follow a spline
+    `
+    THREE.Curves = {};
+
+
+     THREE.Curves.GrannyKnot = THREE.Curve.create( function(){},
+
+       function(t) {
+          t = 2 * Math.PI * t;
+
+          var x = -0.22 * Math.cos(t) - 1.28 * Math.sin(t) - 0.44 * Math.cos(3 * t) - 0.78 * Math.sin(3 * t);
+          var y = -0.1 * Math.cos(2 * t) - 0.27 * Math.sin(2 * t) + 0.38 * Math.cos(4 * t) + 0.46 * Math.sin(4 * t);
+          var z = 0.7 * Math.cos(3 * t) - 0.4 * Math.sin(3 * t);
+          return new THREE.Vector3(x, y, z).multiplyScalar(20);
+      }
+    );
+    `
+    spline = new THREE.Curves.GrannyKnot()
+    g = new THREE.TubeGeometry(spline, 200, .25, 10, true)
+
+    # tubeMesh = THREE.SceneUtils.createMultiMaterialObject( g, [
+    #   new THREE.MeshLambertMaterial({
+    #     color: 0x00FF88
+    #   }),
+    #   new THREE.MeshBasicMaterial({
+    #     color: 0x000000,
+    #     opacity: 0.3,
+    #     wireframe: true,
+    #     transparent: true
+    # })])
+    # tubeMesh.scale.set( 10, 10, 10 )
+    # @add(tubeMesh)
+
+    ship.scale.set(.5, .5, .5)
+
+    ship.update = =>
+      time = Date.now()
+      looptime = 20 * 1000
+      t = ( time % looptime ) / looptime
+
+      pos = g.parameters.path.getPointAt( t )
+      pos.multiplyScalar( 10 )
+      ship.position.set(pos.x, pos.y, pos.z)
+      pos.multiplyScalar( 2 )
+
+      pos = g.parameters.path.getPointAt( ( t + 10 / g.parameters.path.getLength() ) % 1 ).multiplyScalar( 10 )
+      ship.lookAt(pos)
 
     # ## Turn around 3D (~need improvement)
     # @position.set(250, 0, 0)
@@ -66,24 +118,25 @@ class SPACE.Spaceship extends THREE.Group
     #   @position.z = distance * Math.sin(time * .001)
     #   @position.y = distance * Math.cos(time * .001)
 
-    ## Turn around
-    @position.set(250, 0, 250)
+    # ## Turn around (~need improvement)
+    # # ship.rotation.set(Math.PI*.5, Math.PI, Math.PI*.5)
+    # @position.set(250, 0, 250)
 
-    point = new THREE.Vector2(@target.x, @target.z)
-    orbit = new THREE.Vector2(@position.x, @position.z)
-    distance = orbit.distanceTo(point)
+    # point = new THREE.Vector2(@target.x, @target.z)
+    # orbit = new THREE.Vector2(@position.x, @position.z)
+    # distance = orbit.distanceTo(point)
 
-    time = 0
-    ship.update = (delta)=>
-      time += delta
-      angle = time * .001
-      p   = new THREE.Vector3(0, 0, 0)
-      p.x = distance * Math.cos(angle)
-      p.y = distance * Math.sin(angle)
-      p.z = @position.z
+    # time = 0
+    # ship.update = (delta)=>
+    #   time += delta
+    #   angle = time * .001
+    #   p   = new THREE.Vector3(0, 0, 0)
+    #   p.x = distance * Math.cos(angle)
+    #   p.y = distance * Math.sin(angle)
+    #   p.z = @position.z
 
-      @position.set(p.x, 0, p.y)
-      @lookAt(@target)
+    #   @position.set(p.x, 0, p.y)
+    #   @lookAt(@target)
 
     ## Move to a direction
 

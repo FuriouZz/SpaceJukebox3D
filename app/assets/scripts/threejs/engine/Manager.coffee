@@ -45,7 +45,6 @@ class SPACE.SceneManager
     document.body.appendChild( @_stats.domElement )
 
   _render: =>
-    @_stats.begin() if SPACE.ENV == 'development'
     window.requestAnimationFrame(@_render)
 
     if !@currentScene or @currentScene.isPaused()
@@ -53,7 +52,7 @@ class SPACE.SceneManager
 
     @_renderer.render( @currentScene, @_camera )
 
-    @_stats.end() if SPACE.ENV == 'development'
+    @_stats.update() if SPACE.ENV == 'development'
 
   _update: =>
     setTimeout(@_update, 1000 / SPACE.FPS)
