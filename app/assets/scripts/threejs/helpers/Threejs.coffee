@@ -69,3 +69,29 @@ THREE.IncomingCurve = THREE.Curve.create(
     vector.z = @v0.z
     return vector
 )
+
+THREE.TestCurve = THREE.Curve.create(
+  (v0, v1, nbLoop=2)->
+    @v0   = v0
+    @v1   = v1
+    @nbLoop = nbLoop
+    return
+  , (t)->
+    angle = Math.PI * 2 * t * @nbLoop
+
+    d = @v1.z - @v0.z
+
+    dist = @v1.clone().sub(@v0)
+
+    vector = new THREE.Vector3()
+    vector.x = @v0.x + dist.x * t
+    vector.y = @v0.y + dist.y * t
+    vector.z = @v0.z + dist.z * t
+
+    t = Math.min(t, 1 - t) / .5
+
+    vector.x += Math.cos(angle) * (50 * t)
+    vector.y += Math.sin(angle) * (50 * t)
+
+    return vector
+)

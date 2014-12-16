@@ -12,7 +12,7 @@ class SPACE.MainScene extends SPACE.Scene
     options     =
       minLength: 0
       maxLength: 100
-      radius: 200
+      radius: 300
       absolute: false
       lineForceDown: .5
       lineForceUp: 1
@@ -24,8 +24,49 @@ class SPACE.MainScene extends SPACE.Scene
     @jukebox.whileplaying = @_whileplaying
     @jukebox.predefinedPlaylist()
 
+
     @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
     @add(@spaceship)
+
+    setTimeout(=>
+      @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+      @add(@spaceship)
+    , 1000)
+
+    setTimeout(=>
+      @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+      @add(@spaceship)
+    , 2000)
+
+    setTimeout(=>
+      @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+      @add(@spaceship)
+    , 4000)
+
+    setTimeout(=>
+      @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+      @add(@spaceship)
+    , 8000)
+
+    setTimeout(=>
+      @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+      @add(@spaceship)
+    , 16000)
+
+    setTimeout(=>
+      @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+      @add(@spaceship)
+    , 32000)
+
+    setTimeout(=>
+      @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+      @add(@spaceship)
+    , 64000)
+
+    setTimeout(=>
+      @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+      @add(@spaceship)
+    , 128000)
 
     @setupSomething()
 
@@ -52,27 +93,32 @@ class SPACE.MainScene extends SPACE.Scene
     @equalizer.mute()
 
   setupSomething: ->
-    # # Cube
-    # g = new THREE.BoxGeometry(100, 100, 100)
-    # m = new THREE.MeshLambertMaterial({ color: 0x0088ff, shading: THREE.FlatShading })
-    # @cube = new THREE.Mesh(g, m)
-    # # @cube.position.setZ(100)
-    # @cube.rotation.set(Math.random(), Math.random(), Math.random())
-    # @cube.castShadow = true
-    # @cube.receiveShadow = true
-    # @add(@cube)
+    # Cube
+    g = new THREE.BoxGeometry(100, 100, 100)
+    m = new THREE.MeshLambertMaterial({ color: 0x0088ff, shading: THREE.FlatShading })
+    @cube = new THREE.Mesh(g, m)
+    @cube.scale.set(.5, .5, .5)
+    @cube.rotation.set(Math.random(), Math.random(), Math.random())
+    @cube.castShadow = true
+    @cube.receiveShadow = true
+    @add(@cube)
 
-    g = new THREE.SphereGeometry()
-    m = new THREE.MeshLambertMaterial({ color: 0xFFAA22 })
-    circle = new THREE.Mesh(g, m)
-    circle.castShadow = true
-    circle.receiveShadow = true
-    @add(circle)
-
-    circle.update = ->
+    @cube.update = ->
       @rotation.x += .01
       @rotation.y -= .01
       @rotation.z += .01
+
+    # g = new THREE.SphereGeometry()
+    # m = new THREE.MeshLambertMaterial({ color: 0xFFAA22 })
+    # circle = new THREE.Mesh(g, m)
+    # circle.castShadow = true
+    # circle.receiveShadow = true
+    # @add(circle)
+
+    # circle.update = ->
+    #   @rotation.x += .01
+    #   @rotation.y -= .01
+    #   @rotation.z += .01
 
     light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.2 )
     light.position.set( 500, 500, 500 )
