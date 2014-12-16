@@ -2,10 +2,10 @@ class SPACE.SoundCloud
 
   token: null
 
-  constructor: (id)->
+  constructor: (id, redirect_uri)->
     SC.initialize({
       client_id: id
-      redirect_uri: 'http://spacejukebox.dev/plouf.html'
+      redirect_uri: redirect_uri
     })
 
     if (document.cookie.replace(/(?:(?:^|.*;\s*)soundcloud_connected\s*\=\s*([^;]*).*$)|^.*$/, "$1") != "true")

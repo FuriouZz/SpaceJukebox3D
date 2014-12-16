@@ -12,7 +12,7 @@ class SPACE.Jukebox
   @IS_STOPPED: 'IS_STOPPED'
 
   constructor: ->
-    @SC = new SPACE.SoundCloud(SPACE.SOUNDCLOUD.id)
+    @SC = new SPACE.SoundCloud(SPACE.SOUNDCLOUD.id, SPACE.SOUNDCLOUD.redirect_uri)
 
     @playlist = []
     @_events()
@@ -101,7 +101,6 @@ class SPACE.Jukebox
 
   _starting: (sound)=>
     @current.sound = sound
-    sound.mute()
 
   _onplay: =>
     _H.trigger(JUKEBOX.IS_PLAYING)

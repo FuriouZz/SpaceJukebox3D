@@ -12,6 +12,7 @@ SPACE.THREE = {}
 # SOUNDCLOUD
 SPACE.SOUNDCLOUD =
   id: '807d28575c384e62a58be5c3a1446e68'
+  redirect_uri: 'http://10.0.2.24:3000/plouf.html'
 
 # SPACESHIP EVENTS STATES
 
