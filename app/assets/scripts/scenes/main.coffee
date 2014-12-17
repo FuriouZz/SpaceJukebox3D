@@ -1,143 +1,226 @@
 class SPACE.MainScene extends SPACE.Scene
 
-  playlist: null
-  current: null
+  equalizer: null
+  jukebox:   null
 
-  constructor: (bg)->
-    super(bg)
+  waveformData: null
 
-    middlePoint = new PIXI.Point(window.innerWidth * .5, window.innerHeight * .5)
+  constructor: ->
+    super
 
-    @eq = new SPACE.Equalizer(middlePoint, {minLength: 0, maxLength: 200, radius: 250})
-    @addChild(@eq)
+    middlePoint = new THREE.Vector3(0, 0, 0)
+    options     =
+      minLength: 0
+      maxLength: 100
+      radius: 300
+      absolute: false
+      lineForceDown: .5
+      lineForceUp: 1
 
-    @sc = new SPACE.SoundCloud(SPACE.SOUNDCLOUD.id)
-
-    # @playlist = []
-    # @_predefinedPlaylist()
-    @_events()
+    @equalizer = new SPACE.Equalizer(middlePoint, options)
+    @add(@equalizer)
 
     @jukebox = new SPACE.Jukebox()
     @jukebox.whileplaying = @_whileplaying
+    @jukebox.predefinedPlaylist()
+
+
+    # @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    # @add(@spaceship)
+    #
+    # setTimeout(=>
+    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    #   @add(@spaceship)
+    # , 1000)
+    #
+    # setTimeout(=>
+    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    #   @add(@spaceship)
+    # , 2000)
+    #
+    # setTimeout(=>
+    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    #   @add(@spaceship)
+    # , 4000)
+    #
+    # setTimeout(=>
+    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    #   @add(@spaceship)
+    # , 8000)
+    #
+    # setTimeout(=>
+    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    #   @add(@spaceship)
+    # , 16000)
+    #
+    # setTimeout(=>
+    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    #   @add(@spaceship)
+    # , 32000)
+    #
+    # setTimeout(=>
+    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    #   @add(@spaceship)
+    # , 64000)
+    #
+    # setTimeout(=>
+    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
+    #   @add(@spaceship)
+    # , 128000)
+
+    @setupSomething()
+
+    @waveformData = {}
+
+    @_events()
 
   _events: ->
     document.addEventListener(JUKEBOX.TRACK_ON_ADD.type, @_eTrackOnAdd)
+    document.addEventListener(JUKEBOX.IS_STOPPED.type, @_eJukeboxIsStopped)
 
   _eTrackOnAdd: (e)=>
-    spaceship = new SPACE.Spaceship(@eq.center, @eq.radius)
-    @addChild(spaceship)
+    spaceship = new SPACE.Spaceship(@equalizer.center, @equalizer.radius)
+    @add(spaceship)
 
     track = e.object.track
     track.spaceship = spaceship
-    HELPERS.trigger(JUKEBOX.TRACK_ADDED, { track: track })
+    _H.trigger(JUKEBOX.TRACK_ADDED, { track: track })
 
-    @dotted = new SPACE.DottedLine(track)
-    @addChild(@dotted)
+    # @dotted = new SPACE.DottedLine(track)
+    # @addChild(@dotted)
 
-  _predefinedPlaylist: ->
-    @add('https://soundcloud.com/chonch-2/courte-danse-macabre')
-    @add('https://soundcloud.com/chonch-2/mouais')
-    @add('https://soundcloud.com/huhwhatandwhere/sets/supreme-laziness-the-celestics')
-    @add('https://soundcloud.com/chonch-2/cacaco-2')
-    @add('https://soundcloud.com/chonch-2/duodenum')
-    @add('https://soundcloud.com/chonch-2/little-green-monkey')
+  _eJukeboxIsStopped: (e)=>
+    @equalizer.mute()
 
-  draw: ->
-    @eq.draw()
+  setupSomething: ->
+    # Cube
+    g = new THREE.BoxGeometry(100, 100, 100)
+    m = new THREE.MeshLambertMaterial({ color: 0x0088ff, shading: THREE.FlatShading })
+    @cube = new THREE.Mesh(g, m)
+    @cube.scale.set(.5, .5, .5)
+    @cube.rotation.set(Math.random(), Math.random(), Math.random())
+    @cube.castShadow = true
+    @cube.receiveShadow = true
+    @add(@cube)
+
+    @cube.update = ->
+      @rotation.x += .01
+      @rotation.y -= .01
+      @rotation.z += .01
+
+    # g = new THREE.SphereGeometry()
+    # m = new THREE.MeshLambertMaterial({ color: 0xFFAA22 })
+    # circle = new THREE.Mesh(g, m)
+    # circle.castShadow = true
+    # circle.receiveShadow = true
+    # @add(circle)
+
+    # circle.update = ->
+    #   @rotation.x += .01
+    #   @rotation.y -= .01
+    #   @rotation.z += .01
+
+    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.2 )
+    light.position.set( 500, 500, 500 )
+    @add( light )
+
+    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.6 )
+    light.position.set( -500, 500, 500 )
+    @add( light )
+
+    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.2 )
+    light.position.set( 500, -500, 500 )
+    @add( light )
+
+    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.2 )
+    light.position.set( -500, -500, 500 )
+    @add( light )
+
+    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.1 )
+    light.position.set( 500, 500, -500 )
+    @add( light )
+
+    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.1 )
+    light.position.set( -500, 500, -500 )
+    @add( light )
+
+    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.1 )
+    light.position.set( 500, -500, -500 )
+    @add( light )
+
+    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.1 )
+    light.position.set( -500, -500, -500 )
+    @add( light )
+
+    # light.castShadow = true
+
+    # light.shadowCameraNear    = 700
+    # light.shadowCameraFar     = manager._camera.far
+    # light.shadowCameraFov     = 50
+
+    # light.shadowCascade = true
+
+    # light.shadowBias          = 0.0001
+    # light.shadowDarkness      = 0.5
+
+    # light.shadowCameraRight    =  5
+    # light.shadowCameraLeft     = -5
+    # light.shadowCameraTop      =  5
+    # light.shadowCameraBottom   = -5
+
+    # light.shadowMapWidth      = 2048
+    # light.shadowMapHeight     = 2048
+
+
+    # helper = new THREE.SpotLightHelper(light, 1)
+    # @add(helper)
+
+    # speed =
+    #   x: Math.random() * 0.005
+    #   y: Math.random() * 0.005
+    #   z: Math.random() * 0.005
+
+    # @cube.update = ->
+    #   @rotation.x += speed.x
+    #   @rotation.y += speed.y
+    #   @rotation.z += speed.z
 
   update: (delta)->
-    super
+    super(delta)
     @jukebox.update(delta)
 
-  #   for track, i in @playlist
-  #     track.update(delta)
+    # if @jukebox.state == SPACE.Jukebox.IS_PLAYING
+    #   if @jukebox.current and @jukebox.current.sound.paused
+    #     @equalizer.mute()
+    #   else if @waveformData.hasOwnProperty('mono')
+    #     @equalizer.setValues(@waveformData.mono)
 
-  #   if @playlist.length > 0
-  #     @next() if @current == null
+      # if !@jukebox.current.sound.isPlaying()
+      #   @equalizer.mute()
+      # else
+      #   tmp = []
+      #   for v, i in @jukebox.current.sound.getWaveform()
+      #     tmp.push(v) if i%8 == 0
 
-  # add: (soundOrPlaylist)->
-  #   middlePoint = new PIXI.Point(window.innerWidth * .5, window.innerHeight * .5)
+      #   values = Array(tmp.length)
+      #   for i in [0..((tmp.length*.5)-1)]
+      #     values[i] = values[tmp.length-1-i] = tmp[i]
 
-  #   @sc.getSoundOrPlaylist(soundOrPlaylist, (o)=>
-  #     tracks = null
-  #     if o.hasOwnProperty('tracks')
-  #       tracks = o.tracks
-  #     else
-  #       tracks = []
-  #       tracks.push(o)
-
-  #     for data in tracks
-  #       # Create Spaceship
-  #       spaceship = new SPACE.Spaceship(middlePoint, @eq.radius)
-  #       @addChild(spaceship)
-
-  #       # Create track from data and spaceship
-  #       track = new SPACE.Track(data, spaceship)
-  #       track.durationBeforeLaunching = @getDurationFromPosition(@playlist.length-1)
-  #       @playlist.push(track)
-
-  #   )
-
-  # getDurationFromPosition: (position)->
-  #   duration = 0
-  #   for track, i in @playlist
-  #     duration += track.data.duration
-  #     break if i == position
-  #   return duration
-
-  # next: (track)->
-  #   @_onfinish() if @current
-  #   @current = @playlist.shift()
-
-  #   @sc.streamSound(@current.data, @_starting, {
-  #     onplay       : @_onplay
-  #     onfinish     : @_onfinish
-  #     onstop       : @_onstop
-  #     whileplaying : @_whileplaying
-  #   })
-
-  # play: ->
-  #   if @current and @current.hasOwnProperty('sound')
-  #     @current.sound.play()
-
-  # resume: ->
-  #   if @current and @current.hasOwnProperty('sound')
-  #     @current.sound.resume()
-
-  # pause: ->
-  #   if @current and @current.hasOwnProperty('sound')
-  #     @current.sound.pause()
-  #     @eq.mute()
-
-  # stop: ->
-  #   if @current and @current.hasOwnProperty('sound')
-  #     @current.sound.stop()
-  #     @eq.mute()
-
-  # _starting: (sound)=>
-  #   @current.sound = sound
-  #   document.dispatchEvent(SPACE.Track.ON_PLAY())
-
-  # _onplay: =>
-  #   console.log 'onplay'
-
-  # _onfinish: =>
-  #   @current.sound.stop()
-  #   @current = null
-  #   @eq.mute()
-  #   @tmpPosition = 0
-  #   document.dispatchEvent(SPACE.Track.ON_STOP())
+      #   @equalizer.setValues(values)
 
   _whileplaying: =>
     sound = @jukebox.current.sound
 
     datas = Array(256)
     for i in [0..127]
-      datas[i]     = Math.max(sound.waveformData.left[i], sound.waveformData.right[i])
-      datas[255-i] = Math.max(sound.waveformData.left[i], sound.waveformData.right[i])
+      value = Math.max(sound.waveformData.left[i], sound.waveformData.right[i])
+      # datas[i] = datas[255-i] = value * Math.max(sound.peakData.left, sound.peakData.left)
+      datas[i] = datas[255-i] = value
 
-    if sound.paused
-      @eq.mute()
-    else
-      @eq.setNewValues(datas)
+    if @jukebox.current and @jukebox.current.sound.paused
+      @equalizer.mute()
+    else if @waveformData.hasOwnProperty('mono')
+      @equalizer.setValues(@waveformData.mono)
 
+    @waveformData.mono   = datas
+    @waveformData.stereo = sound.waveformData

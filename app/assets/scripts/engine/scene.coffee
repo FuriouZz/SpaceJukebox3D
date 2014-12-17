@@ -1,16 +1,21 @@
-class Scene extends PIXI.Stage
-  paused: false
+class SPACE.Scene extends THREE.Scene
+  # paused: false
 
-  constructor: (bg)->
-    super(bg)
+  constructor: ->
+    super
 
-  update: (delta)=>
+    @type             = 'Scene'
+    @fog              = null
+    @overrideMaterial = null
+    @autoUpdate       = true
+
+  update: (delta)->
     for child in @children
       @updateObj(child, delta)
 
   updateObj: (obj, delta)->
     obj.update(delta) if typeof obj.update == 'function'
-    if obj.children && obj.children.length > 0
+    if obj.hasOwnProperty('children') and obj.children.length > 0
       for child in obj.children
         @updateObj(child, delta)
 
@@ -24,5 +29,3 @@ class Scene extends PIXI.Stage
 
   isPaused: ->
     return @paused
-
-SPACE.Scene = Scene
