@@ -22,6 +22,9 @@ class SPACE.Equalizer extends THREE.Group
   lineForceUp:       .5
   lineForceDown:     .5
   absolute:          false
+  nbValues:          0
+  maxNbValues:       512
+  mirror:            true
 
   constructor: (point, opts={})->
     super
@@ -36,6 +39,8 @@ class SPACE.Equalizer extends THREE.Group
       lineForceUp:       .5
       lineForceDown:     .5
       absolute:          false
+      nbValues:          256 # Maximum 512 values
+      mirror:            true
 
     opts               = _Coffee.merge(defaults, opts)
     @minLength         = opts.minLength
@@ -46,21 +51,33 @@ class SPACE.Equalizer extends THREE.Group
     @lineForceUp       = opts.lineForceUp
     @lineForceDown     = opts.lineForceDown
     @absolute          = opts.absolute
+    @nbValues          = opts.nbValues
+    @mirror            = opts.mirror
 
     # Set values
     @center     = point
-    @_values    = []
-    @_oldValues = []
-    @_newValues = []
+    @_values    = @mute(false)
+    @_oldValues = @mute(false)
+    @_newValues = @mute(false)
 
     @generate()
 
+  setNbValues: (nbValues)->
+    @nbValues = nbValues
+    @mute()
+
   setValues: (values)->
-    newValues = []
-    for value in values
+    if @mirror
+      datas  = Array(@nbValues)
+      for i in [0..((@nbValues*.5)-1)]
+        datas[i] = datas[@nbValues-1-i] = values[i]
+      values = datas
+
+    newValues = @mute(false)
+    for value, i in values
       value = Math.abs(value) if @absolute
       length = @minLength + parseFloat(value)*(@maxLength - @minLength)
-      newValues.push(Math.max(length, 0))
+      newValues[i] = Math.max(length, 0)
     @_newValues = newValues
     @resetInterpolation()
 
@@ -78,20 +95,20 @@ class SPACE.Equalizer extends THREE.Group
     t = @_time / @interpolationTime
     return if t > 1
 
-    for i in [0..(@_newValues.length-1)]
+    for i in [0..(@maxNbValues-1)]
       diff        = @_oldValues[i] - @_newValues[i]
       @_values[i] = @_oldValues[i] - t * diff
-    @updateGeometries()# if @isGenerated
+    @updateGeometries()
 
   updateGeometries: (create=false)->
-    for i in [0..(@_values.length-1)]
-      angle  = Math.PI * 2 * i / (@_values.length)
+    if @test
+      console.log @_values.length, @_oldValues.length, @_newValues.length
 
-      length = @_values[i]
-      radius = @radius
+    for length, i in @_values
+      angle  = Math.PI * 2 * i / (@nbValues-1)
 
-      from = @computePosition(@center, angle, radius-length*@lineForceDown)
-      to   = @computePosition(@center, angle, radius+length*@lineForceUp)
+      from = @computePosition(@center, angle, @radius-length*@lineForceDown)
+      to   = @computePosition(@center, angle, @radius+length*@lineForceUp)
 
       if typeof @lines[i] == 'undefined'
         geometry = new THREE.Geometry()
@@ -109,20 +126,22 @@ class SPACE.Equalizer extends THREE.Group
 
   random: (setValues=true)=>
     values = []
-    for i in [0..63]
+    for i in [0..(@maxNbValues-1)]
       values[i] = Math.random()
     @setValues(values) if setValues
     return values
 
   mute: (setValues=true)->
     values = []
-    for i in [0..63]
+    for i in [0..(@maxNbValues-1)]
       values[i] = 0
     @setValues(values) if setValues
+    return values
 
   resetInterpolation: ->
     @_time = 0
     @_oldValues = @_values
+    @_values    = @mute(false)
 
     if @_newValues.length > @_oldValues.length
       for i in [(@_oldValues.length)..(@_newValues.length-1)]
@@ -133,3 +152,6 @@ class SPACE.Equalizer extends THREE.Group
     y = point.y + Math.cos(angle) * length
     return new THREE.Vector3(x, y, point.z)
 
+  removeLineFromParent: (index)->
+    parent = @lines[index]
+    parent.remove(@lines[index])
