@@ -22,17 +22,13 @@ class SPACE.Spaceship extends THREE.Group
   constructor: (target, radius)->
     super
 
-    @target = target
+    @target = new THREE.Vector3(target.x, target.y, 5)
     @radius = radius
     @angle  = Math.random() * Math.PI * 2
 
     @setState(SPACE.Spaceship.IDLE)
 
     @setup()
-
-    # setTimeout(=>
-    #   @setState(SPACE.Spaceship.LAUNCHED)
-    # , 2000)
 
   setRadius: (radius)->
     @radius = radius
@@ -80,7 +76,7 @@ class SPACE.Spaceship extends THREE.Group
         # SPACE.LOG('IDLE')
         @path = null
       when SPACE.Spaceship.LAUNCHED
-        SPACE.LOG('LAUNCHED')
+        # SPACE.LOG('LAUNCHED')
         @_resetTime()
         @path = @_cached.launchedPath
         @duration = 10 * 1000
@@ -88,7 +84,7 @@ class SPACE.Spaceship extends THREE.Group
         v = @path.getPoint(0)
         @ship.position.set(v.x, v.y, v.z)
       when SPACE.Spaceship.IN_LOOP
-        SPACE.LOG('IN_LOOP')
+        # SPACE.LOG('IN_LOOP')
         @_resetTime()
         @path = @_cached.inLoopPath
         @duration = @songDuration
@@ -96,10 +92,9 @@ class SPACE.Spaceship extends THREE.Group
         v = @path.getPoint(0)
         @ship.position.set(v.x, v.y, v.z)
       when SPACE.Spaceship.ARRIVED
-        SPACE.LOG('ARRIVED')
+        # SPACE.LOG('ARRIVED')
         @path = null
         @parent.remove(@)
-        # _H.trigger(JUKEBOX.IS_STOPPED)      
       else
         @setState(SPACE.Spaceship.IDLE)
 

@@ -3,224 +3,64 @@ class SPACE.MainScene extends SPACE.Scene
   equalizer: null
   jukebox:   null
 
-  waveformData: null
+  loadingManager: null
+  loader:         null
 
   constructor: ->
     super
 
-    middlePoint = new THREE.Vector3(0, 0, 0)
-    options     =
-      minLength: 0
-      maxLength: 100
-      radius: 300
-      absolute: false
-      lineForceDown: .5
-      lineForceUp: 1
+    @_events()
 
-    @equalizer = new SPACE.Equalizer(middlePoint, options)
-    @add(@equalizer)
+    # Create a SC singleton
+    unless SPACE.hasOwnProperty('SC')
+      SPACE.SC = new SPACE.SoundCloud(SPACE.SOUNDCLOUD.id, SPACE.SOUNDCLOUD.redirect_uri)
+    @SC = SPACE.SC
 
-    @jukebox = new SPACE.Jukebox()
+    # Loading Manager
+    @loadingManager            = new THREE.LoadingManager()
+    @loadingManager.onProgress = @_environmentOnProgress
+    @loader                    = new THREE.XHRLoader(@loadingManager)
+
+    # Load the default environment
+    @_loadEnvironment('default', ['Earth'], @_environmentLoaded)
+
+    @setup() if @SC.isConnected()
+
+  _events: ->
+    document.addEventListener(SPACE.SoundCloud.IS_CONNECTED.type, @setup)
+
+  setup: =>
+    @jukebox = new SPACE.Jukebox(this)
     @jukebox.whileplaying = @_whileplaying
     @jukebox.predefinedPlaylist()
 
+  _loadEnvironment: (name, files, callback)->
+    SPACE[name.toUpperCase()] = SPACE[name.toUpperCase()] || {}
+    @loadingManager.onLoad    = (r)->
+      callback(name)
 
-    # @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    # @add(@spaceship)
-    #
-    # setTimeout(=>
-    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    #   @add(@spaceship)
-    # , 1000)
-    #
-    # setTimeout(=>
-    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    #   @add(@spaceship)
-    # , 2000)
-    #
-    # setTimeout(=>
-    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    #   @add(@spaceship)
-    # , 4000)
-    #
-    # setTimeout(=>
-    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    #   @add(@spaceship)
-    # , 8000)
-    #
-    # setTimeout(=>
-    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    #   @add(@spaceship)
-    # , 16000)
-    #
-    # setTimeout(=>
-    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    #   @add(@spaceship)
-    # , 32000)
-    #
-    # setTimeout(=>
-    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    #   @add(@spaceship)
-    # , 64000)
-    #
-    # setTimeout(=>
-    #   @spaceship = new SPACE.Spaceship(middlePoint, @equalizer.radius)
-    #   @add(@spaceship)
-    # , 128000)
+    files.push('Setup')
+    for file in files
+      return if SPACE[name.toUpperCase()].hasOwnProperty(file)
+      @loader.load('scripts/environments/'+name+'/'+file+'.js')
 
-    @setupSomething()
+  _environmentOnProgress: (item, loaded, total)=>
+    objectName = item.replace(/(.+\/|\.js)/g, '')
+    envName    = (item.split(/\//)[2]).toUpperCase()
+    object     = eval(@loader.cache.files[item])
+    SPACE[envName][objectName] = object
 
-    @waveformData = {}
-
-    @_events()
-
-  _events: ->
-    document.addEventListener(JUKEBOX.TRACK_ON_ADD.type, @_eTrackOnAdd)
-    document.addEventListener(JUKEBOX.IS_STOPPED.type, @_eJukeboxIsStopped)
-
-  _eTrackOnAdd: (e)=>
-    spaceship = new SPACE.Spaceship(@equalizer.center, @equalizer.radius)
-    @add(spaceship)
-
-    track = e.object.track
-    track.spaceship = spaceship
-    _H.trigger(JUKEBOX.TRACK_ADDED, { track: track })
-
-    # @dotted = new SPACE.DottedLine(track)
-    # @addChild(@dotted)
-
-  _eJukeboxIsStopped: (e)=>
-    @equalizer.mute()
-
-  setupSomething: ->
-    # Cube
-    g = new THREE.BoxGeometry(100, 100, 100)
-    m = new THREE.MeshLambertMaterial({ color: 0x0088ff, shading: THREE.FlatShading })
-    @cube = new THREE.Mesh(g, m)
-    @cube.scale.set(.5, .5, .5)
-    @cube.rotation.set(Math.random(), Math.random(), Math.random())
-    @cube.castShadow = true
-    @cube.receiveShadow = true
-    @add(@cube)
-
-    @cube.update = ->
-      @rotation.x += .01
-      @rotation.y -= .01
-      @rotation.z += .01
-
-    # g = new THREE.SphereGeometry()
-    # m = new THREE.MeshLambertMaterial({ color: 0xFFAA22 })
-    # circle = new THREE.Mesh(g, m)
-    # circle.castShadow = true
-    # circle.receiveShadow = true
-    # @add(circle)
-
-    # circle.update = ->
-    #   @rotation.x += .01
-    #   @rotation.y -= .01
-    #   @rotation.z += .01
-
-    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.2 )
-    light.position.set( 500, 500, 500 )
-    @add( light )
-
-    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.6 )
-    light.position.set( -500, 500, 500 )
-    @add( light )
-
-    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.2 )
-    light.position.set( 500, -500, 500 )
-    @add( light )
-
-    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.2 )
-    light.position.set( -500, -500, 500 )
-    @add( light )
-
-    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.1 )
-    light.position.set( 500, 500, -500 )
-    @add( light )
-
-    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.1 )
-    light.position.set( -500, 500, -500 )
-    @add( light )
-
-    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.1 )
-    light.position.set( 500, -500, -500 )
-    @add( light )
-
-    light = new THREE.DirectionalLight( 0xFFFFFF, 1.8*.1 )
-    light.position.set( -500, -500, -500 )
-    @add( light )
-
-    # light.castShadow = true
-
-    # light.shadowCameraNear    = 700
-    # light.shadowCameraFar     = manager._camera.far
-    # light.shadowCameraFov     = 50
-
-    # light.shadowCascade = true
-
-    # light.shadowBias          = 0.0001
-    # light.shadowDarkness      = 0.5
-
-    # light.shadowCameraRight    =  5
-    # light.shadowCameraLeft     = -5
-    # light.shadowCameraTop      =  5
-    # light.shadowCameraBottom   = -5
-
-    # light.shadowMapWidth      = 2048
-    # light.shadowMapHeight     = 2048
-
-
-    # helper = new THREE.SpotLightHelper(light, 1)
-    # @add(helper)
-
-    # speed =
-    #   x: Math.random() * 0.005
-    #   y: Math.random() * 0.005
-    #   z: Math.random() * 0.005
-
-    # @cube.update = ->
-    #   @rotation.x += speed.x
-    #   @rotation.y += speed.y
-    #   @rotation.z += speed.z
+  _environmentLoaded: (name)=>
+    if @environment
+      @environment.onExit =>
+        @remove(@environment)
+      @environment = null
+    @environment = new SPACE[name.toUpperCase()].Setup(@jukebox)
+    @add(@environment)
+    @environment.onEnter( =>
+      SPACE.LOG 'Environment displayed'
+    )
 
   update: (delta)->
     super(delta)
-    @jukebox.update(delta)
-
-    # if @jukebox.state == SPACE.Jukebox.IS_PLAYING
-    #   if @jukebox.current and @jukebox.current.sound.paused
-    #     @equalizer.mute()
-    #   else if @waveformData.hasOwnProperty('mono')
-    #     @equalizer.setValues(@waveformData.mono)
-
-      # if !@jukebox.current.sound.isPlaying()
-      #   @equalizer.mute()
-      # else
-      #   tmp = []
-      #   for v, i in @jukebox.current.sound.getWaveform()
-      #     tmp.push(v) if i%8 == 0
-
-      #   values = Array(tmp.length)
-      #   for i in [0..((tmp.length*.5)-1)]
-      #     values[i] = values[tmp.length-1-i] = tmp[i]
-
-      #   @equalizer.setValues(values)
-
-  _whileplaying: =>
-    sound = @jukebox.current.sound
-
-    datas = Array(256)
-    for i in [0..127]
-      value = Math.max(sound.waveformData.left[i], sound.waveformData.right[i])
-      # datas[i] = datas[255-i] = value * Math.max(sound.peakData.left, sound.peakData.left)
-      datas[i] = datas[255-i] = value
-
-    if @jukebox.current and @jukebox.current.sound.paused
-      @equalizer.mute()
-    else if @waveformData.hasOwnProperty('mono')
-      @equalizer.setValues(@waveformData.mono)
-
-    @waveformData.mono   = datas
-    @waveformData.stereo = sound.waveformData
+    @jukebox.update(delta) if @jukebox
