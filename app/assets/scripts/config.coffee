@@ -10,9 +10,16 @@ SPACE.pixelRatio = (window.devicePixelRatio || 1)
 SPACE.THREE = {}
 
 # SOUNDCLOUD
-SPACE.SOUNDCLOUD =
-  id: '807d28575c384e62a58be5c3a1446e68'
-  redirect_uri: 'http://10.0.2.24:3000/plouf.html'
+SPACE.SOUNDCLOUD = (->
+  object = {}
+  if SPACE.ENV == 'development'
+    object.id = 'de0b8539b4ad2f6cc23dfe1cc6e0438d'
+  else
+    object.id = '807d28575c384e62a58be5c3a1446e68'
+  object.redirect_uri = window.location.origin
+  return object
+)()
+
 
 # METHODS
 SPACE.LOG        = (log, styles='')->

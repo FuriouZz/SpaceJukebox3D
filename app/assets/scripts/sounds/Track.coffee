@@ -1,36 +1,35 @@
 class SPACE.Track
 
-  data:      null
-  spaceship: null
+  data:                 null
+  spaceship:            null
+  sound:                null
 
-  sound:     null
+  time:                 0
+  pendingDuration:      0
 
-  time:      0
-
-  pendingDuration: 0
-
-  JukeBoxisPlaying: false
+  isPlaying:            false
+  whileplayingCallback: null
 
   constructor: (data)->
     @data = data
+    @SC   = SPACE.SC
     @_events()
 
   _events: ->
-    document.addEventListener(JUKEBOX.IS_PLAYING.type, @_eJukeboxIsPlaying)
-    document.addEventListener(JUKEBOX.IS_STOPPED.type, @_eJukeboxIsStopped)
+    document.addEventListener(TRACK.IS_PLAYING.type, @_eTrackIsPlaying)
+    document.addEventListener(TRACK.IS_STOPPED.type, @_eTrackIsStopped)
 
-  _eJukeboxIsPlaying: =>
-    @JukeBoxisPlaying = true
+  _eTrackIsPlaying: =>
+    @isPlaying = true
 
-  _eJukeboxIsStopped: =>
-    @JukeBoxisPlaying = false
-    # console.log 'i said stop', @data.title
+  _eTrackIsStopped: =>
+    @isPlaying = false
 
   update: (delta)->
-    if @JukeBoxisPlaying
+    if @isPlaying
       @time += delta
 
-    if @pendingDuration > 0 and (@pendingDuration - @time) < 1*60*1000 and @spaceship.state == SPACE.Spaceship.IDLE and @JukeBoxisPlaying
+    if @pendingDuration > 0 and (@pendingDuration - @time) < 5*60*1000 and @spaceship.state == SPACE.Spaceship.IDLE and @isPlaying
       SPACE.LOG('Spaceship launched : '+@data.title)
       @spaceship.setState(SPACE.Spaceship.LAUNCHED)
 
@@ -41,6 +40,50 @@ class SPACE.Track
       @spaceship.time = @spaceship.songDuration - (@pendingDuration - @time)
 
     if @spaceship.state == SPACE.Spaceship.ARRIVED
-      @JukeBoxisPlaying = false    
+      @isPlaying = false
 
     @spaceship.update(delta)
+
+  stream: ->
+    @SC.streamSound(@data, {
+      onplay       : @_onplay
+      onfinish     : @_onfinish
+      onstop       : @_onstop
+      whileplaying : @_whileplaying
+    }, @_starting)
+
+  play: ->
+    @sound.play()
+
+  pause: ->
+    @sound.pause()
+
+  stop: ->
+    @_onfinish()
+
+  destruct: ->
+    document.removeEventListener(TRACK.IS_PLAYING.type, @_eTrackIsPlaying)
+    document.removeEventListener(TRACK.IS_STOPPED.type, @_eTrackIsStopped)
+    @sound.destruct()
+
+  _starting: (sound)=>
+    @sound = sound
+    SPACE.LOG('Next: ' + @data.title)
+
+  _onplay: =>
+    _H.trigger(TRACK.IS_PLAYING, { track: this })
+
+  _onfinish: ->
+    _H.trigger(TRACK.IS_STOPPED, { track: this })
+    @sound.stop()
+
+  _whileplaying: =>
+    datas = Array(256)
+    for i in [0..255]
+      datas[i] = Math.max(@sound.waveformData.left[i], @sound.waveformData.right[i])
+
+    @waveformData =
+      mono: datas
+      stereo: @sound.waveformData
+
+    @whileplayingCallback() if @whileplayingCallback

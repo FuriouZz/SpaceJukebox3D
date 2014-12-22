@@ -1,6 +1,10 @@
 class SPACE.SoundCloud
 
-  token: null
+  client_id:    null
+  redirect_uri: null
+  token:        null
+
+  @IS_CONNECTED: (-> return new Event('soundcloud_connected'))()
 
   constructor: (id, redirect_uri)->
     SC.initialize({
@@ -8,12 +12,26 @@ class SPACE.SoundCloud
       redirect_uri: redirect_uri
     })
 
+    @client_id    = id
+    @redirect_uri = redirect_uri
+
+  isConnected: ->
     if (document.cookie.replace(/(?:(?:^|.*;\s*)soundcloud_connected\s*\=\s*([^;]*).*$)|^.*$/, "$1") != "true")
-      SC.connect(->
-        token = SC.accessToken()
-      )
+      document.querySelector('.login').classList.add('show')
+      document.querySelector('.login').addEventListener('click', @_eClick)
     else
       @token = document.cookie.replace(/(?:(?:^|.*;\s*)soundcloud_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+      return true
+    return false
+
+  _eClick: =>
+    SC.connect(=>
+      @token          = SC.accessToken()
+      document.cookie = "soundcloud_token=" + @token
+      document.cookie = "soundcloud_connected=true"
+      document.querySelector('.login').classList.remove('show')
+      _H.trigger(SPACE.SoundCloud.IS_CONNECTED)
+    )
 
   pathOrUrl: (path, callback)->
     # Verify if it's an ID or an URL
@@ -31,20 +49,18 @@ class SPACE.SoundCloud
         callback(url)
     )
 
-  streamSound: (object, callback, events={})->
+  streamSound: (object, options={}, callback)->
     if object and object.hasOwnProperty('kind')
       path = object.uri.replace('https://api.soundcloud.com', '')
-      SC.stream(path, {
+
+      defaults =
         autoPlay: true
-        # useEQData: true
         useWaveformData: true
-        # usePeakData: true
         useHTML5audio: true
         preferFlash: false
-        whileplaying : events.whileplaying
-        onplay       : events.onplay
-        onfinish     : events.onfinish
-      }, callback)
+
+      options = _Coffee.merge(defaults, options)
+      SC.stream(path, options, callback)
 
   getSoundOrPlaylist: (path, callback)->
     @pathOrUrl(path, (path)=>
@@ -58,3 +74,11 @@ class SPACE.SoundCloud
     @getSoundOrPlaylist(path, (sound)=>
       callback(sound.stream_url+'?oauth_token='+@token)
     )
+
+  search: (search, path, callback)->
+    if typeof path == 'function'
+      callback = path
+      path     = 'tracks'
+
+    path = '/'+path+'?oauth_token='+@token+'&q='+search
+    SC.get(path, callback)
