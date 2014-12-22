@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+        <style>
+            body {
+                background-color: #FFF0DB;
+                font-family: 'Source Sans Pro';
+            }
+
+            .wait {
+                position:absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+                text-align: center;
+                width: 100px;
+                height: 115px;
+            }
+
+            .wait img {
+                width: 75px;
+            }
+
+            .wait p {
+                opacity: .25;
+                font-size: 10px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="wait">
+            <img src="images/wait.gif" alt="">
+            <p>Please wait...</p>
+        </div>
+
+        <script>
+            var hash    = location.hash.substr(1).split('&')
+            var results = {}
+            for (var i in hash) {
+                var keyvalue = hash[i].split('=')
+                var key      = keyvalue[0]
+                var value    = keyvalue[1]
+                results[key] = value
+            }
+
+            document.cookie = "soundcloud_token=" + results.access_token
+            document.cookie = "soundcloud_connected=true"
+
+            setTimeout(window.close, 3000)
+        </script>
+
+    </body>
+</html>

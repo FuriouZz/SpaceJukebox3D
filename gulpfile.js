@@ -29,7 +29,7 @@ gulp.task('sass', function(){
 })
 
 gulp.task('coffee', function() {
-  return gulp.src(paths.scripts.src+'**/*.coffee')
+    return gulp.src(paths.scripts.src+'**/*.coffee')
              .pipe(gp.sourcemaps.init())
              .pipe(gp.coffee({bare: true}).on('error', gp.notify.onError(function(error){
                 return "ERROR: " + error
@@ -38,7 +38,7 @@ gulp.task('coffee', function() {
              .pipe(gulp.dest(paths.scripts.dest))
 })
 
-gulp.task('watch', ['sass', 'coffee'], function(){
+gulp.task('watch', 'compile', function(){
     gulp.watch(paths.styles.src+'**/*.{scss,sass}', ['sass', reload])
     gulp.watch(paths.scripts.src+'**/*.coffee',     ['coffee', reload])
     gulp.watch('**/*.html', {cwd: paths.base.dest}, reload)
@@ -59,4 +59,5 @@ gulp.task('bower', function(){
     return gp.bower('public/vendors')
 })
 
+gulp.task('compile', ['sass', 'coffee'])
 gulp.task('default', ['serve','watch']);

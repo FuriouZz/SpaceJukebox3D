@@ -1,0 +1,54 @@
+.login
+    +position(absolute, null 0 50px 0)
+    +size(300px 25px)
+    margin: auto
+    text-align: center
+    z-index: 1
+    +transition(opacity 500ms, visibility 0ms linear 500ms)
+    visibility: hidden
+    opacity: 0
+
+    &.show
+        +transition(opacity 500ms, visibility 0ms linear 0ms)
+        visibility: visible
+        opacity: 1
+
+    a
+        +hardAcc
+        +inline-block
+        +position(relative)
+        +size(200px 40px)
+        border-radius: 25px
+        font-family: "Source Sans Pro"
+        color: white
+        text-decoration: none
+        overflow: hidden
+        background-color: #0088FF
+
+        div
+            +hardAcc
+            +box-sizing(border-box)
+            +position(relative)
+            +transition(all 250ms)
+            color: white
+            z-index: 1
+            padding: 10px 20px
+
+        &:hover
+            div
+                color: #0088FF
+            &:before
+                +transform(scale(1) translateZ(0))
+
+        &:before
+            content: ""
+            +inline-block
+            +size(200px)
+            +position(absolute, 0 0 0 0)
+            +transition(transform 250ms)
+            +transform(scale(0) translateZ(0))
+            margin: auto
+            background-color: white
+            border-radius: 50%
+            z-index: 0
+
