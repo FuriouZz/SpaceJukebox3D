@@ -1,9 +1,10 @@
 class SPACE.Jukebox
 
   ## Data objects
-  SC:          null
-  current:     null
-  playlist:    null
+  SC:           null
+  current:      null
+  playlist:     null
+  searchEngine: null
 
   ## THREEJS Objects
   scene:       null
@@ -31,12 +32,12 @@ class SPACE.Jukebox
     })
     @group.add(@equalizer)
 
-    @SC       = SPACE.SC
-    @playlist = []
+    @SC           = SPACE.SC
+    @playlist     = []
+    @searchEngine = new SPACE.SearchEngine(this)
     @_events()
 
   _events: ->
-    # document.addEventListener(JUKEBOX.TRACK_ADDED.type, @_eTrackAdded)
     document.addEventListener(TRACK.IS_PLAYING.type, @_eTrackIsPlaying)
     document.addEventListener(TRACK.IS_STOPPED.type, @_eTrackIsStopped)
 
@@ -47,7 +48,6 @@ class SPACE.Jukebox
     @equalizer.mute()
     @current.destruct()
     @current = null
-    # @next()
 
   _createTrack: (data)->
     spaceship       = new SPACE.Spaceship(@equalizer.center, @equalizer.radius)
@@ -78,8 +78,8 @@ class SPACE.Jukebox
       # 'https://soundcloud.com/huhwhatandwhere/sets/supreme-laziness-the-celestics'
       # 'https://soundcloud.com/takugotbeats/sets/25-nights-for-nujabes'
       # 'https://soundcloud.com/tommisch/sets/tom-misch-soulection-white'
-      # 'https://soundcloud.com/professorkliq/sets/trackmania-valley-ost'
-      'https://soundcloud.com/professorkliq/sets/trackmania-stadium-ost'
+      'https://soundcloud.com/professorkliq/sets/trackmania-valley-ost'
+      # 'https://soundcloud.com/professorkliq/sets/trackmania-stadium-ost'
     ]
 
     list = _Coffee.shuffle(list)
@@ -132,6 +132,9 @@ class SPACE.Jukebox
       return true
     return false
     # @current.spaceship.parent.removeChild(@current.spaceship)
+
+  search: (value)->
+    @searchEngine.search(value)
 
   _whileplaying: =>
     if @current and @current.sound and @current.sound.paused

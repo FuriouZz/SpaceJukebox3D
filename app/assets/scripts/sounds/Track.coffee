@@ -29,7 +29,7 @@ class SPACE.Track
     if @isPlaying
       @time += delta
 
-    if @pendingDuration > 0 and (@pendingDuration - @time) < 5*60*1000 and @spaceship.state == SPACE.Spaceship.IDLE and @isPlaying
+    if @pendingDuration > 0 and (@pendingDuration - @time) < 60*60*1000 and @spaceship.state == SPACE.Spaceship.IDLE and @isPlaying
       SPACE.LOG('Spaceship launched : '+@data.title)
       @spaceship.setState(SPACE.Spaceship.LAUNCHED)
 
@@ -48,7 +48,7 @@ class SPACE.Track
     @SC.streamSound(@data, {
       onplay       : @_onplay
       onfinish     : @_onfinish
-      onstop       : @_onstop
+      onstop       : @_onfinish
       whileplaying : @_whileplaying
     }, @_starting)
 

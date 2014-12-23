@@ -1,0 +1,131 @@
+$opacityDuration: 100ms
+$transformDuration: 250ms
+
+.search
+  =harcAcc
+  +transition(transform $transformDuration ease-in 0ms, background-color 250ms linear 250ms)
+  +position(absolute, 0 0 0 0)
+  width: 100%
+  height: 80px
+  margin: auto
+  +transform(scaleY(1))
+  background-color: rgba(255, 255, 255, .90)
+  font-family: "Source Sans Pro"
+  -webkit-font-smoothing: antialiased
+  color: #424a52
+  text-align: center
+  line-height: 0
+  z-index: 1
+
+  &.item_selected
+    +transition(background-color 0ms)
+    background-color: rgba(255, 255, 255, 0)
+
+  &.hidden
+    +transition(transform $transformDuration ease-in $opacityDuration)
+    +transform(scaleY(0))
+    input
+      +transition(opacity $opacityDuration ease-in 0ms)
+      opacity: 0
+
+  form
+    +size(600px 100%)
+    display: inline-block
+    overflow: hidden
+
+  input
+    +transition(opacity $opacityDuration ease-in $transformDuration, transform 250ms)
+    +size(100%)
+    padding: 0
+    text-align: left
+    background-color: inherit
+    border: none
+    text-align: left
+    -webkit-font-smoothing: antialiased
+    font-style: italic
+    font-size: 24px
+    line-height: initial
+    color: #424a52
+    outline: none
+    opacity: 1
+
+    +placeholder
+      font-family: "Source Sans Pro"
+      -webkit-font-smoothing: antialiased
+      font-style: italic
+      font-size: 24px
+      color: #b8c3cd
+
+  ul, li
+    margin: 0
+    padding: 0
+    list-style: none
+
+  .list
+    margin-top: calc(-80px * 1)
+    height: calc(80px * 3)
+    overflow: hidden
+    line-height: initial
+
+  ul
+    =harcAcc
+    +transition(transform 250ms)
+    line-height: 0
+
+  li
+    =harcAcc
+    +transition(transform 250ms, background-color 250ms, width 250ms)
+    +size(100% 80px)
+    +inline-block
+    +box-sizing(border-box)
+    +transform(scale(1))
+    line-height: initial
+    text-align: center
+    background-color: rgba(255, 255, 255, .80)
+    border-bottom: 1px rgba(0, 0, 0, .1) solid
+
+    &:first-child
+      border-top: 1px rgba(0, 0, 0, .1) solid
+      background-color: inherit
+
+    &.focused
+      background-color: rgba(255, 255, 255, 1)
+
+    &.selected
+      +transform(scale(.75))
+      width: 600px
+
+    &.added
+      +transition(transform 250ms, height 250ms ease-in 250ms)
+      height: 0
+
+    div
+      +size(600px 100%)
+      display: inline-block
+
+      div
+        +size(520px 100%)
+        +box-sizing(border-box)
+        float: left
+        text-align: left
+        padding-left: 25px
+        padding-top: 10px
+
+    img
+      +size(80px)
+      float: left
+
+  p
+    height: 31px
+    padding: 0
+    margin: 0
+    overflow: hidden
+    font-size: 24px
+    text-overflow: ellipsis
+    white-space: nowrap
+
+  p:last-child
+    font-size: 18px
+    text-transform: capitalize
+    color: #b8c3cd
+

@@ -32,7 +32,8 @@ class SPACE.MainScene extends SPACE.Scene
   setup: =>
     @jukebox = new SPACE.Jukebox(this)
     @jukebox.whileplaying = @_whileplaying
-    @jukebox.predefinedPlaylist()
+    # @jukebox.predefinedPlaylist()
+    # @jukebox.search('kaytranada')
 
   _loadEnvironment: (name, files, callback)->
     SPACE[name.toUpperCase()] = SPACE[name.toUpperCase()] || {}

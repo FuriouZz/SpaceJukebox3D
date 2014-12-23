@@ -11,7 +11,6 @@ class SPACE.Equalizer extends THREE.Group
   # THREE
   material:   null
   lines:      null
-  isGenerated: false
 
   # Parameters
   maxLength:         0
@@ -35,7 +34,7 @@ class SPACE.Equalizer extends THREE.Group
       minLength:         50
       radius:            250
       interpolationTime: 150
-      color:             0xDE548E
+      color:             0xFFFFFF
       lineForceUp:       .5
       lineForceDown:     .5
       absolute:          false
@@ -105,7 +104,7 @@ class SPACE.Equalizer extends THREE.Group
       console.log @_values.length, @_oldValues.length, @_newValues.length
 
     for length, i in @_values
-      angle  = Math.PI * 2 * i / (@nbValues-1)
+      angle  = Math.PI * 2 * i / @nbValues
 
       from = @computePosition(@center, angle, @radius-length*@lineForceDown)
       to   = @computePosition(@center, angle, @radius+length*@lineForceUp)

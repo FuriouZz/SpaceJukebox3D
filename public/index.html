@@ -6,26 +6,37 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,200italic,300italic,400italic,600italic' rel='stylesheet' type='text/css'>
+    <link href='styles/source_sans_pro.css' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="styles/main.css">
   </head>
   <body>
     <div id="wrapper">
-      <i class="icn labs_black"></i>
       <div class="login">
         <a href="#">
           <div>Connect to SoundCloud</div>
         </a>
       </div>
+      <div class="search hidden">
+        <form action="">
+          <input type="text" placeholder="Search a track">
+        </form>
+        <div class="list">
+          <ul></ul>
+        </div>
+      </div>
     </div>
 
-    <script src="http://connect.soundcloud.com/sdk.js"></script>
+    <!-- // <script src="//connect.soundcloud.com/sdk.js"></script> -->
+    <script>window.SC || document.write('<script src="vendors/soundcloud/sdk.js"><\/script>')</script>
 
     <script src="vendors/threejs/build/three.js"></script>
+    <!-- // <script src="vendors/soundmanager2/script/soundmanager2-nodebug-jsmin.js"></script> -->
+    <script src="vendors/jquery/dist/jquery.min.js"></script>
     <script src="vendors/stats.js/build/stats.min.js"></script>
 
     <script src="scripts/config.js"></script>
     <script src="scripts/events.js"></script>
+    <script src="scripts/enums.js"></script>
 
     <script src="scripts/helpers/Helpers.js"></script>
     <script src="scripts/helpers/Coffee.js"></script>
@@ -39,8 +50,8 @@
     <script src="scripts/scenes/Main.js"></script>
 
     <script src="scripts/sounds/Soundcloud.js"></script>
+    <script src="scripts/sounds/SearchEngine.js"></script>
     <script src="scripts/sounds/Jukebox.js"></script>
-    <script src="scripts/sounds/Player.js"></script>
     <script src="scripts/sounds/Track.js"></script>
 
     <script src="scripts/graphics/Equalizer.js"></script>

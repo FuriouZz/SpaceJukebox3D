@@ -15,6 +15,16 @@ class SPACE.SoundCloud
     @client_id    = id
     @redirect_uri = redirect_uri
 
+    # soundManager.setup({
+    #   url:
+    #   autoPlay: true
+    #   useWaveformData: true
+    #   useHTML5audio: true
+    #   preferFlash: false
+    #   flash9Options:
+    #     useWaveformData: true
+    # })
+
   isConnected: ->
     if (document.cookie.replace(/(?:(?:^|.*;\s*)soundcloud_connected\s*\=\s*([^;]*).*$)|^.*$/, "$1") != "true")
       document.querySelector('.login').classList.add('show')
@@ -35,7 +45,7 @@ class SPACE.SoundCloud
 
   pathOrUrl: (path, callback)->
     # Verify if it's an ID or an URL
-    if /^\/(playlists|tracks)\/[0-9]+$/.test(path)
+    if /^\/(playlists|tracks|users)\/[0-9]+$/.test(path)
       return callback(path)
 
     unless /^(http|https)/.test(path)
@@ -61,8 +71,19 @@ class SPACE.SoundCloud
 
       options = _Coffee.merge(defaults, options)
       SC.stream(path, options, callback)
+      # soundManager.flash9Options.useWaveformData = true
+
+      # @getSoundUrl(path, (url)->
+      #   options.url = url
+      #   sound = soundManager.createSound(options)
+      #   callback(sound)
+      # )
 
   getSoundOrPlaylist: (path, callback)->
+    if typeof path == 'object' and path.hasOwnProperty('kind')
+      callback(path)
+      return true
+
     @pathOrUrl(path, (path)=>
       @get(path, callback)
     )
@@ -80,5 +101,11 @@ class SPACE.SoundCloud
       callback = path
       path     = 'tracks'
 
-    path = '/'+path+'?oauth_token='+@token+'&q='+search
-    SC.get(path, callback)
+    if path == 'users'
+      @pathOrUrl('https://soundcloud.com/'+search, (path)=>
+        path = path+'/favorites?oauth_token='+@token
+        SC.get(path, callback)
+      )
+    else
+      path = '/'+path+'?oauth_token='+@token+'&q='+search
+      SC.get(path, callback)

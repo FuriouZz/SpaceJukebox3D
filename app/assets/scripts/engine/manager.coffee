@@ -21,7 +21,7 @@ class SPACE.SceneManager
     # @_camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     @_renderer = new THREE.WebGLRenderer({antialias: true})
-    @_renderer.setClearColor(new THREE.Color(0xFFF0DB))
+    @_renderer.setClearColor(new THREE.Color(0x58b1ff))
     @_renderer.setSize(window.innerWidth, window.innerHeight)
     @_renderer.shadozMapEnabled = true
     @_renderer.shadozMapSoft    = true
