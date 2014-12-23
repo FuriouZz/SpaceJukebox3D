@@ -24,6 +24,9 @@ gulp.task('sass', function(){
     };
 
     return gp.rubySass(paths.base.src, sassOptions)
+             .on('error', gp.notify.onError(function(error){
+                return "ERROR: " + error
+             }))
              .pipe(gp.sourcemaps.write())
              .pipe(gulp.dest(paths.base.dest))
 })
@@ -38,7 +41,7 @@ gulp.task('coffee', function() {
              .pipe(gulp.dest(paths.scripts.dest))
 })
 
-gulp.task('watch', 'compile', function(){
+gulp.task('watch', ['compile'], function(){
     gulp.watch(paths.styles.src+'**/*.{scss,sass}', ['sass', reload])
     gulp.watch(paths.scripts.src+'**/*.coffee',     ['coffee', reload])
     gulp.watch('**/*.html', {cwd: paths.base.dest}, reload)
