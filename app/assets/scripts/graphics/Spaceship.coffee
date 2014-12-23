@@ -58,7 +58,7 @@ class SPACE.Spaceship extends THREE.Group
     g.applyMatrix(matrix)
 
     @ship = THREE.SceneUtils.createMultiMaterialObject(g, [
-      new THREE.MeshLambertMaterial({ color: 0x0088ff, side: THREE.DoubleSide })
+      new THREE.MeshLambertMaterial({ color: 0xFFFFFF, side: THREE.DoubleSide })
     ])
     @ship.castShadow = true
     @ship.receiveShadow = true
@@ -91,6 +91,15 @@ class SPACE.Spaceship extends THREE.Group
 
         v = @path.getPoint(0)
         @ship.position.set(v.x, v.y, v.z)
+
+        @shipRotationZ = @ship.rotation.z
+        $(@ship.rotation).animate({
+          z: 0
+        }, {
+          duration: 500
+          progress: (object)=>
+            @shipRotationZ = object.tweens[0].now
+        })
       when SPACE.Spaceship.ARRIVED
         # SPACE.LOG('ARRIVED')
         @path = null
@@ -128,8 +137,12 @@ class SPACE.Spaceship extends THREE.Group
     v = @path.getPointAt(ahead).multiplyScalar( 1 )
     @ship.lookAt(v)
 
+    if @state == SPACE.Spaceship.LAUNCHED
+      scale = .15 + (1 - t) * .35
+      @ship.scale.set(scale, scale, scale)
+
     if @state == SPACE.Spaceship.IN_LOOP
-      @ship.rotation.set(@ship.rotation.x, @ship.rotation.y, 0)
+      @ship.rotation.set(@ship.rotation.x, @ship.rotation.y, @shipRotationZ)
 
   _computePaths: ->
     fromA     = new THREE.Vector3()
