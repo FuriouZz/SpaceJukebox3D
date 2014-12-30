@@ -1,15 +1,16 @@
 $opacityDuration: 100ms
 $transformDuration: 250ms
+$height: 60px
 
 .search
   =harcAcc
   +transition(transform $transformDuration ease-in 0ms, background-color 250ms linear 250ms)
   +position(absolute, 0 0 0 0)
   width: 100%
-  height: 80px
+  height: $height
   margin: auto
   +transform(scaleY(1))
-  background-color: rgba(255, 255, 255, .90)
+  background-color: rgba(255, 255, 255, .75)
   font-family: "Source Sans Pro"
   -webkit-font-smoothing: antialiased
   color: #424a52
@@ -62,8 +63,8 @@ $transformDuration: 250ms
     list-style: none
 
   .list
-    margin-top: calc(-80px * 1)
-    height: calc(80px * 3)
+    margin-top: $height * -1
+    height: $height * 3
     overflow: hidden
     line-height: initial
 
@@ -75,7 +76,7 @@ $transformDuration: 250ms
   li
     =harcAcc
     +transition(transform 250ms, background-color 250ms, width 250ms)
-    +size(100% 80px)
+    +size(100% $height)
     +inline-block
     +box-sizing(border-box)
     +transform(scale(1))
@@ -109,10 +110,10 @@ $transformDuration: 250ms
         float: left
         text-align: left
         padding-left: 25px
-        padding-top: 10px
+        padding-top: 1px
 
     img
-      +size(80px)
+      +size($height)
       float: left
 
   p

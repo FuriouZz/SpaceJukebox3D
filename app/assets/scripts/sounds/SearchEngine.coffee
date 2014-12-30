@@ -170,29 +170,29 @@ class SPACE.SearchEngine
     results = JSON.parse(string)
 
     @input.value = 'Looking for "'+value+'"'
-    # @SC.search(value, path, (results)=>
-    if results.length == 0
-      @input.value = '"'+value+'" has no result'
-      return
+    @SC.search(value, path, (results)=>
+      if results.length == 0
+        @input.value = '"'+value+'" has no result'
+        return
 
-    @results     = []
-    @listContainer.appendChild(document.createElement('li'))
-    for track, i in results
-      li = document.createElement('li')
-      li.setAttribute('data-index', i)
+      @results     = []
+      @listContainer.appendChild(document.createElement('li'))
+      for track, i in results
+        li = document.createElement('li')
+        li.setAttribute('data-index', i)
 
-      artwork_url = track.artwork_url
-      artwork_url = 'images/no_artwork.gif' unless artwork_url
-      li.innerHTML = """
-        <div>
-          <img src="#{artwork_url}" alt="" onerror="this.src='images/no_artwork.gif'">
+        artwork_url = track.artwork_url
+        artwork_url = 'images/no_artwork.gif' unless artwork_url
+        li.innerHTML = """
           <div>
-            <p>#{track.title}</p>
-            <p>#{track.user.username.toLowerCase()}</p>
+            <img src="#{artwork_url}" alt="" onerror="this.src='images/no_artwork.gif'">
+            <div>
+              <p>#{track.title}</p>
+              <p>#{track.user.username.toLowerCase()}</p>
+            </div>
           </div>
-        </div>
-      """
-      @results.push(track)
-      @listContainer.appendChild(li)
-    @setState(SearchEngineState.SEARCH)
-    # )
+        """
+        @results.push(track)
+        @listContainer.appendChild(li)
+      @setState(SearchEngineState.SEARCH)
+    )

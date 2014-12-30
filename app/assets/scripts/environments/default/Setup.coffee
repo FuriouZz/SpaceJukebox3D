@@ -2,9 +2,9 @@ class Setup extends THREE.Group
 
   jukebox: null
 
-  constructor: (jukebox)->
+  constructor: ->
     super
-    @jukebox = jukebox
+    @jukebox = SPACE.Jukebox
 
   onEnter: (callback)->
     callback() if callback

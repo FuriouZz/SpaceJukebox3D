@@ -26,7 +26,7 @@ class SPACE.Spaceship extends THREE.Group
     @radius = radius
     @angle  = Math.random() * Math.PI * 2
 
-    @setState(SPACE.Spaceship.IDLE)
+    @setState(SpaceshipState.IDLE)
 
     @setup()
 
@@ -72,10 +72,10 @@ class SPACE.Spaceship extends THREE.Group
   setState: (state)->
     @state = state
     switch state
-      when SPACE.Spaceship.IDLE
+      when SpaceshipState.IDLE
         # SPACE.LOG('IDLE')
         @path = null
-      when SPACE.Spaceship.LAUNCHED
+      when SpaceshipState.LAUNCHED
         # SPACE.LOG('LAUNCHED')
         @_resetTime()
         @path = @_cached.launchedPath
@@ -83,7 +83,7 @@ class SPACE.Spaceship extends THREE.Group
 
         v = @path.getPoint(0)
         @ship.position.set(v.x, v.y, v.z)
-      when SPACE.Spaceship.IN_LOOP
+      when SpaceshipState.IN_LOOP
         # SPACE.LOG('IN_LOOP')
         @_resetTime()
         @path = @_cached.inLoopPath
@@ -100,27 +100,27 @@ class SPACE.Spaceship extends THREE.Group
           progress: (object)=>
             @shipRotationZ = object.tweens[0].now
         })
-      when SPACE.Spaceship.ARRIVED
+      when SpaceshipState.ARRIVED
         # SPACE.LOG('ARRIVED')
         @path = null
         @parent.remove(@)
       else
-        @setState(SPACE.Spaceship.IDLE)
+        @setState(SpaceshipState.IDLE)
 
   update: (delta)->
-    if @state != SPACE.Spaceship.IDLE and @state != SPACE.Spaceship.ARRIVED
+    if @state != SpaceshipState.IDLE and @state != SpaceshipState.ARRIVED
 
       t = Math.min(@time / @duration, 1)
 
       if t >= 1
         @_resetTime()
-        if @state == SPACE.Spaceship.LAUNCHED
-          @setState(SPACE.Spaceship.IN_LOOP)
-        else if @state == SPACE.Spaceship.IN_LOOP
-          @setState(SPACE.Spaceship.ARRIVED)
+        if @state == SpaceshipState.LAUNCHED
+          @setState(SpaceshipState.IN_LOOP)
+        else if @state == SpaceshipState.IN_LOOP
+          @setState(SpaceshipState.ARRIVED)
         return
 
-      if @state == SPACE.Spaceship.LAUNCHED
+      if @state == SpaceshipState.LAUNCHED
         @time += delta
         t = _Easing.QuadraticEaseOut(t)
 
@@ -137,11 +137,11 @@ class SPACE.Spaceship extends THREE.Group
     v = @path.getPointAt(ahead).multiplyScalar( 1 )
     @ship.lookAt(v)
 
-    if @state == SPACE.Spaceship.LAUNCHED
+    if @state == SpaceshipState.LAUNCHED
       scale = .15 + (1 - t) * .35
       @ship.scale.set(scale, scale, scale)
 
-    if @state == SPACE.Spaceship.IN_LOOP
+    if @state == SpaceshipState.IN_LOOP
       @ship.rotation.set(@ship.rotation.x, @ship.rotation.y, @shipRotationZ)
 
   _computePaths: ->

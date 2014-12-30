@@ -5,6 +5,7 @@ class SPACE.Jukebox
   current:      null
   playlist:     null
   searchEngine: null
+  waveformData: null
 
   ## THREEJS Objects
   scene:       null
@@ -20,6 +21,10 @@ class SPACE.Jukebox
     @scene = scene
     @group = new THREE.Group()
     @scene.add(@group)
+
+    @waveformData =
+      mono: null
+      stereo: null
 
     # Initialize the equalizer
     @equalizer = new SPACE.Equalizer(new THREE.Vector3(), {
@@ -137,6 +142,8 @@ class SPACE.Jukebox
     @searchEngine.search(value)
 
   _whileplaying: =>
+    @waveformData = @current.waveformData if @current and @current.sound
+
     if @current and @current.sound and @current.sound.paused
       @equalizer.mute()
     else if @current.waveformData.hasOwnProperty('mono')

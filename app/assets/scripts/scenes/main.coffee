@@ -30,9 +30,10 @@ class SPACE.MainScene extends SPACE.Scene
     document.addEventListener(SPACE.SoundCloud.IS_CONNECTED.type, @setup)
 
   setup: =>
-    @jukebox = new SPACE.Jukebox(this)
+    SPACE.Jukebox         = new SPACE.Jukebox(this)
+    @jukebox              = SPACE.Jukebox
     @jukebox.whileplaying = @_whileplaying
-    # @jukebox.predefinedPlaylist()
+    @jukebox.predefinedPlaylist()
     # @jukebox.search('kaytranada')
 
   _loadEnvironment: (name, files, callback)->
