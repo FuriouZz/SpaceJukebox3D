@@ -1,0 +1,44 @@
+// MIXINS
+=centeredWithSize($width, $height)
+    position: absolute
+    top: 0
+    bottom: 0
+    left: 0
+    right: 0
+    margin: auto
+    width: $width
+    height: $height
+
+=clearfix()
+    content: ""
+    visibility: hidden
+    display: block
+    clear: both
+    height: 0
+
+=hardAcc()
+    +transform(translateZ(0))
+    +backface-visibility(hidden)
+    +perspective(1000)
+
+.center
+    text-align: center
+    height: 100%
+    &:before
+        content: ""
+        display: inline-block
+        height: 100%
+        vertical-align: middle
+        margin-right: -.25em
+
+    .centered
+        display: inline-block
+        vertical-align: middle
+        text-align: left
+
+.clear:after
+    +clearfix()
+.left
+    float: left
+.right
+    float: right

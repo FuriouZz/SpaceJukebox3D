@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Space Jukebox</title>
+    <meta name="description" content="Space Jukebox">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="styles/source_sans_pro.css">
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
+    <style class="cover-style"></style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="cover">
+        <div>
+          <h1></h1>
+          <h2></h2>
+        </div>
+      </div>
+      <div class="login">
+        <a href="#">
+          <div>Connect to SoundCloud</div>
+        </a>
+      </div>
+      <footer>
+        <div class="credit">Made by <a href="http://www.christophemassolin.com/">Christophe Massolin</a></div>
+        <ul class="social">
+          <a href="#"><i class="icn fb"></i></a>
+          <a href="#"><i class="icn tw"></i></a>
+          <a href="#"><i class="icn ig"></i></a>
+        </ul>
+      </footer>
+    </div>
+
+    <!-- // <script src="//connect.soundcloud.com/sdk.js"></script> -->
+    <script>window.SC || document.write('<script src="vendors/soundcloud/sdk.js"><\/script>')</script>
+
+    <script src="vendors/threejs/build/three.js"></script>
+    <!-- // <script src="vendors/soundmanager2/script/soundmanager2-nodebug-jsmin.js"></script> -->
+
+    <script src="vendors/jquery/dist/jquery.min.js"></script>
+    <script src="vendors/stats.js/build/stats.min.js"></script>
+
+    <script src="scripts/config.js"></script>
+    <script src="scripts/events.js"></script>
+    <script src="scripts/enums.js"></script>
+
+    <script src="scripts/helpers/Helpers.js"></script>
+    <script src="scripts/helpers/Coffee.js"></script>
+    <script src="scripts/helpers/Maths.js"></script>
+    <script src="scripts/helpers/Threejs.js"></script>
+    <script src="scripts/helpers/Easing.js"></script>
+
+    <script src="scripts/engine/Scene.js"></script>
+    <script src="scripts/engine/Manager.js"></script>
+
+    <script src="scripts/scenes/Main.js"></script>
+
+    <script src="scripts/sounds/Soundcloud.js"></script>
+    <script src="scripts/sounds/SearchEngine.js"></script>
+    <script src="scripts/sounds/Jukebox.js"></script>
+    <script src="scripts/sounds/Track.js"></script>
+
+    <script src="scripts/graphics/Equalizer.js"></script>
+    <script src="scripts/graphics/Spaceship.js"></script>
+
+    <script src="scripts/app.js"></script>
+
+  </body>
+</html>
