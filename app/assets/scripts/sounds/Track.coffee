@@ -25,50 +25,31 @@ class SPACE.Track
   _eTrackIsStopped: =>
     @isPlaying = false
 
-  update: (delta)->
-    if @isPlaying
-      @time += delta
-
-    # if @pendingDuration > 0 and (@pendingDuration - @time) < 60*60*1000 and @spaceship.state == SpaceshipState.IDLE and @isPlaying
-    #   SPACE.LOG('Spaceship launched : '+@data.title)
-    #   @spaceship.setState(SpaceshipState.LAUNCHED)
-
-    if @spaceship.state == SpaceshipState.LAUNCHED
-      @spaceship.songDuration = (@pendingDuration - @time)
-
-    # if @spaceship.state == SpaceshipState.IN_LOOP
-    #   @spaceship.time = @spaceship.songDuration - (@pendingDuration - @time)
-
-    if @spaceship.state == SpaceshipState.ARRIVED
-      @isPlaying = false
-
-    @spaceship.update(delta)# if @spaceship.state == SpaceshipState.LAUNCHED
-
-  removeSpaceship: ->
-    parent = @spaceship.parent
-    parent.remove(@spaceship)
-
   stream: ->
-    @SC.streamSound(@data, {
-      onplay       : @_onplay
-      onfinish     : @_onfinish
-      onstop       : @_onfinish
-      whileplaying : @_whileplaying
-    }, @_starting)
+    url  = 'resources/sounds/'+@data.url
+
+    window.WebAudioAPI = window.WebAudioAPI || new SPACE.WebAudioAPI()
+
+    @api = WebAudioAPI
+    @api.onplay         = @_onplay
+    @api.onaudioprocess = @_whileplaying
+    @api.onended        = @_onfinish
+    @api.setUrl(url)
 
   play: ->
-    @sound.play()
+    @api.play()
 
   pause: ->
-    @sound.pause()
+    @api.pause()
 
   stop: ->
+    @api.stop()
     @_onfinish()
 
   destruct: ->
     document.removeEventListener(TRACK.IS_PLAYING.type, @_eTrackIsPlaying)
     document.removeEventListener(TRACK.IS_STOPPED.type, @_eTrackIsStopped)
-    @sound.destruct()
+    @api.destroy()
 
   _starting: (sound)=>
     @sound = sound
@@ -77,17 +58,20 @@ class SPACE.Track
   _onplay: =>
     _H.trigger(TRACK.IS_PLAYING, { track: this })
 
-  _onfinish: ->
+  _onfinish: =>
     _H.trigger(TRACK.IS_STOPPED, { track: this })
-    @sound.stop()
+    @api.stop()
 
-  _whileplaying: =>
-    datas = Array(256)
+  datas: Array(256)
+  _whileplaying: (e)=>
+    analyser = @api.analyser
+    array    =  new Float32Array(analyser.fftSize)
+    analyser.getFloatTimeDomainData(array)
+
     for i in [0..255]
-      datas[i] = Math.max(@sound.waveformData.left[i], @sound.waveformData.right[i])
+      @datas[i] = array[i]
 
     @waveformData =
-      mono: datas
-      stereo: @sound.waveformData
+      mono: @datas
 
     @whileplayingCallback() if @whileplayingCallback

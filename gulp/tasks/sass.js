@@ -6,8 +6,8 @@ var notify     = require('gulp-notify')
 var reload     = require('browser-sync').reload
 
 gulp.task('sass', function(){
-  options          = config.opts
-  options.loadPath = require('node-bourbon').includePaths
+  options           = config.opts
+  options.loadPath  = require('node-bourbon').includePaths
 
   return rubySass(config.srcPath, options)
           .on('error', notify.onError(function(error){

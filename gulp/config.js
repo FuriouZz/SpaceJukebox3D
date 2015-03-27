@@ -7,7 +7,7 @@ module.exports = {
   }
 
   ,html: {
-    src: dstPath+'**/*.html'
+    src: dstPath+'*.html'
     ,opts: {
       cwd: dstPath
     }
@@ -15,7 +15,7 @@ module.exports = {
 
   ,coffee: {
     src: srcPath+'scripts/**/*.coffee'
-    ,dst: dstPath+'scripts/'
+    ,dst: dstPath+'assets/scripts/'
     ,opts: {
       bare: true
     }
@@ -24,9 +24,9 @@ module.exports = {
   ,sass: {
     src: srcPath+'styles/**/*.{scss,sass}'
     ,srcPath: srcPath+'styles/'
-    ,dstPath: dstPath+'styles/'
+    ,dstPath: dstPath+'assets/styles/'
     ,opts: {
-      sourcemap: false
+      sourcemap: true
     }
   }
 
@@ -39,4 +39,11 @@ module.exports = {
     // ,proxy:  'spacejukebox.dev'
   }
 
+  ,browserify: {
+    // entries: './app/assets/scripts/_modules/main.coffee'
+    modulePath: './app/assets/scripts/_modules/'
+    ,extensions: ['.coffee']
+    ,source: 'main.js'
+    ,dstPath: dstPath+'assets/scripts'
+  }
 }

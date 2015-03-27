@@ -85,6 +85,8 @@ class SPACE.Equalizer extends THREE.Group
     newValues = @mute(false)
     for value, i in values
       value = Math.abs(value) if @absolute
+      value = 0 if typeof value == 'undefined'
+
       length = @minLength + parseFloat(value)*(@maxLength - @minLength)
       newValues[i] = Math.max(length, 0)
     @_newValues = newValues
@@ -107,12 +109,12 @@ class SPACE.Equalizer extends THREE.Group
     for i in [0..(@maxNbValues-1)]
       diff        = @_values[i] - @_newValues[i]
       @_values[i] = @_values[i] - t * diff
-
     @updateGeometries()
 
   updateValues: =>
     if SPACE.Jukebox.state == JukeboxState.IS_PLAYING and SPACE.Jukebox.waveformData.mono
       @setValues(SPACE.Jukebox.waveformData.mono)
+      # @mute()
     setTimeout(@updateValues, @interpolationTime * .5)
 
   updateGeometries: (create=false)->

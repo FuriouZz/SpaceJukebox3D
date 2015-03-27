@@ -17,6 +17,10 @@ class SPACE.Jukebox
   state:        null
   airportState: null
 
+  ## OTHERS
+  delay: 2000
+  time: 0
+
   constructor: (scene)->
     @scene = scene
     @group = new THREE.Group()
@@ -53,7 +57,7 @@ class SPACE.Jukebox
     @SC           = SPACE.SC
     @airport      = []
     @playlist     = []
-    # @searchEngine = new SPACE.SearchEngine(this)
+
     @_events()
     @setState(JukeboxState.IS_STOPPED)
 
@@ -65,18 +69,21 @@ class SPACE.Jukebox
     @setState(JukeboxState.IS_PLAYING)
 
   _eTrackIsStopped: (e)=>
-    @setState(JukeboxState.IS_STOPPED)
+    if @playlist.length > 0
+      @setState(JukeboxState.TRACK_STOPPED)
+    else
+      @setState(JukeboxState.IS_STOPPED)
 
   _createTrack: (data)->
-    spaceship       = new SPACE.Spaceship(@equalizer.center, @equalizer.radius)
+    # spaceship       = new SPACE.Spaceship(@equalizer.center, @equalizer.radius)
     track           = new SPACE.Track(data)
-    track.spaceship = spaceship
+    # track.spaceship = spaceship
     track.pendingDuration = @_calcPending(@playlist.length-1)
 
-    @group.add(spaceship)
+    # @group.add(spaceship)
 
     @playlist.push(track)
-    @airport.push(spaceship)
+    # @airport.push(spaceship)
 
     _H.trigger(JUKEBOX.TRACK_ADDED, { track: track })
     SPACE.LOG('Sound added: ' + track.data.title)
@@ -115,10 +122,14 @@ class SPACE.Jukebox
     switch(state)
       when JukeboxState.IS_PLAYING
         @current.whileplayingCallback = @_whileplaying
-      when JukeboxState.IS_STOPPED
+      else
         if @current
           @current.destruct()
         @current = null
+
+        if @state == JukeboxState.IS_STOPPED
+          console.log 'STOPPED'
+          _H.trigger(JUKEBOX.IS_STOPPED)
 
   setAirportState: (state)=>
     @airportState = state
@@ -133,14 +144,16 @@ class SPACE.Jukebox
         @setAirportState(AirportState.IDLE)
 
   update: (delta)->
-    for track, i in @playlist
-      track.update(delta)
+    if @current == null
+      @time += delta
+    else
+      @time = 0
+    # for track, i in @playlist
+    #   track.update(delta)
+    # @current.update(delta) if @current
 
-    if @playlist.length > 0
+    if @playlist.length > 0 && @time > @delay
       @next() if @current == null
-
-    if @airport.length > 0 and @airportState == AirportState.IDLE
-      @setAirportState(AirportState.SENDING)
 
   ##########################
   # Jukebox player methods #
@@ -152,57 +165,31 @@ class SPACE.Jukebox
     return list
 
   add: (soundOrPlaylist)->
-    @SC.getSoundOrPlaylist soundOrPlaylist, (o)=>
-      tracks = null
-      if o.hasOwnProperty('tracks')
-        tracks = _Coffee.shuffle(o.tracks)
-      else
-        tracks = []
-        tracks.push(o)
+    @_createTrack(soundOrPlaylist)
+    # @SC.getSoundOrPlaylist soundOrPlaylist, (o, err)=>
+    #   if err
+    #     _H.trigger(TRACK_ON_ADD_ERROR, {object: o, error: err})
+    #     return
 
-      for data in tracks
-        @_createTrack(data)
+    #   tracks = null
+    #   if o.hasOwnProperty('tracks')
+    #     tracks = _Coffee.shuffle(o.tracks)
+    #   else
+    #     tracks = []
+    #     tracks.push(o)
+
+    #   for data in tracks
+    #     @_createTrack(data)
 
   next: (track)->
     @current.stop() if @current
     if @playlist.length > 0
       @current = @playlist.shift()
-      @current.removeSpaceship()
+      # @current.removeSpaceship()
       @current.stream()
       return true
     return false
 
-  # search: (value)->
-  #   @searchEngine.search(value)
-
   _whileplaying: =>
-    @waveformData = @current.waveformData if @current and @current.sound
-
-  input: ->
-    userMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
-    navigator.webkitGetUserMedia({ video: false, audio: true }, (localMediaStream)->
-
-
-      vendorURL = window.URL || window.webkitURL;
-      url = vendorURL.createObjectURL(localMediaStream)
-      console.log url
-
-      # setTimeout(->
-      #   console.log 'create'
-      #   sound = soundManager.createSound({
-      #     id: 'plouc'
-      #     url: url
-      #     autoPlay: true
-      #   })
-      #   sound.play()
-      # , 3000)
-
-      audio = document.createElement('audio')
-      audio.src = url
-      audio.autoplay = true
-      document.body.appendChild(audio)
-
-    , (e)->
-      console.log e
-    )
-
+    # console.log 'youpi', @current.sound
+    @waveformData = @current.waveformData if @current# and @current.sound

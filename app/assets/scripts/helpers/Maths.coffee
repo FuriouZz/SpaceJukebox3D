@@ -1,4 +1,4 @@
-_Math = _Math || {
+window._Math = window._Math || {
   angleBetweenPoints: (first, second) ->
     height = second.y - first.y
     width  = second.x - first.x

@@ -10,22 +10,18 @@ class SPACE.MainScene extends SPACE.Scene
     super
 
     @_events()
+    @setup()
 
-    # Create a SC singleton
-    unless SPACE.hasOwnProperty('SC')
-      SPACE.SC = new SPACE.SoundCloud(SPACE.SOUNDCLOUD.id, SPACE.SOUNDCLOUD.redirect_uri)
-    @SC = SPACE.SC
+    # # Create a SC singleton
+    # unless SPACE.hasOwnProperty('SC')
+    #   SPACE.SC = new SPACE.SoundCloud(SPACE.SOUNDCLOUD.id, SPACE.SOUNDCLOUD.redirect_uri)
+    # @SC = SPACE.SC
 
-    # Loading Manager
-    @loadingManager            = new THREE.LoadingManager()
-    @loadingManager.onProgress = @_environmentOnProgress
-    @loader                    = new THREE.XHRLoader(@loadingManager)
+    # @setup() if @SC.isConnected()
 
-    # Load the default environment
-    @_loadEnvironment('default', ['Cover'], @_environmentLoaded)
-    # @_loadEnvironment('evolution', ['Speedwalk'], @_environmentLoaded)
-
-    @setup() if @SC.isConnected()
+    env = new SPACE.DEFAULT.Setup()
+    env.onEnter()
+    @add(env)
 
   _events: ->
     document.addEventListener(SPACE.SoundCloud.IS_CONNECTED.type, @setup)
@@ -34,35 +30,6 @@ class SPACE.MainScene extends SPACE.Scene
     SPACE.Jukebox         = new SPACE.Jukebox(this)
     @jukebox              = SPACE.Jukebox
     @jukebox.whileplaying = @_whileplaying
-    @jukebox.predefinedPlaylist()
-    # @jukebox.search('kaytranada')
-
-  _loadEnvironment: (name, files, callback)->
-    SPACE[name.toUpperCase()] = SPACE[name.toUpperCase()] || {}
-    @loadingManager.onLoad    = (r)->
-      callback(name)
-
-    files.push('Setup')
-    for file in files
-      return if SPACE[name.toUpperCase()].hasOwnProperty(file)
-      @loader.load('scripts/environments/'+name+'/'+file+'.js')
-
-  _environmentOnProgress: (item, loaded, total)=>
-    objectName = item.replace(/(.+\/|\.js)/g, '')
-    envName    = (item.split(/\//)[2]).toUpperCase()
-    object     = eval(@loader.cache.files[item])
-    SPACE[envName][objectName] = object
-
-  _environmentLoaded: (name)=>
-    if @environment
-      @environment.onExit =>
-        @remove(@environment)
-      @environment = null
-    @environment = new SPACE[name.toUpperCase()].Setup(@jukebox)
-    @add(@environment)
-    @environment.onEnter( =>
-      SPACE.LOG 'Environment displayed'
-    )
 
   update: (delta)->
     super(delta)

@@ -54,6 +54,7 @@ class SPACE.SoundCloud
     SC.get('/resolve', { url: path }, (track, error)=>
       if (error)
         console.log error.message
+        callback(error.message, error)
       else
         url = ['', track.kind+'s', track.id].join('/')
         callback(url)
@@ -84,7 +85,10 @@ class SPACE.SoundCloud
       callback(path)
       return true
 
-    @pathOrUrl(path, (path)=>
+    @pathOrUrl(path, (path, error)=>
+      if error
+        callback(path, error)
+        return
       @get(path, callback)
     )
 
@@ -102,7 +106,11 @@ class SPACE.SoundCloud
       path     = 'tracks'
 
     if path == 'users'
-      @pathOrUrl('https://soundcloud.com/'+search, (path)=>
+      @pathOrUrl('https://soundcloud.com/'+search, (path, error)=>
+        if error
+          callback(path, error)
+          return
+
         path = path+'/favorites?oauth_token='+@token
         SC.get(path, callback)
       )

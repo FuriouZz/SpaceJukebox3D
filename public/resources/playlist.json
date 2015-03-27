@@ -1,0 +1,20 @@
+[
+    {
+        "title"      : "all day",
+        "author"     : "bobbyjules",
+        "author_url" : "https://soundcloud.com/bobbyjules/",
+        "url"        : "all_day.mp3",
+        "color1"     : "#f7e1cc",
+        "color2"     : "#ffffff",
+        "cover"      : "all_day.jpg"
+    },
+    {
+        "title"      : "blame it on me",
+        "author"     : "bobbyjules",
+        "author_url" : "https://soundcloud.com/bobbyjules/",
+        "url"        : "blame_it_on_me.mp3",
+        "color1"     : "#f7e1cc",
+        "color2"     : "#ffffff",
+        "cover"      : "blame_it_on_me.jpg"
+    }
+]

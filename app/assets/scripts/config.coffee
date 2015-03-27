@@ -1,5 +1,3 @@
-SPACE = SPACE || {}
-
 SPACE.ENV        = 'development'
 
 # PIXI.JS

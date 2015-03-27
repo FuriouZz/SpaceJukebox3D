@@ -1,4 +1,4 @@
-_THREE = _THREE || {
+window._THREE = window._THREE || {
   HermiteCurve: (pts)->
     path = new THREE.CurvePath()
     path.add(new THREE.HermiteBezierCurve3(pts[0], pts[0], pts[1], pts[2]))

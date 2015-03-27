@@ -1,4 +1,4 @@
-_Easing = _Easing || {
+window._Easing = window._Easing || {
 
   #
   #  Easing function inspired from AHEasing

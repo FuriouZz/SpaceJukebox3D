@@ -1,4 +1,4 @@
-_H = _H || {
+window._H = window._H || {
 
   # Event
   trigger: (e, object)->

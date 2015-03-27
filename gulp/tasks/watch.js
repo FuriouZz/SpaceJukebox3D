@@ -6,9 +6,9 @@ gulp.task('watch', function(){
   gulp.watch(config.sass.src, ['sass', reload])
   gulp.watch(config.html.src, config.html.opts, ['sass', reload])
 
-  if (config.global.javascript_compiler == 'coffee') {
-    gulp.watch(config.coffee.src, ['coffee', reload])
-  } else if (config.global.javascript_compiler == 'es6') {
-    gulp.watch(config.es6.src, ['es6', reload])
-  }
+  // if (config.global.javascript_compiler == 'coffee') {
+  //   gulp.watch(config.coffee.src, ['coffee', reload])
+  // } else if (config.global.javascript_compiler == 'es6') {
+  //   gulp.watch(config.es6.src, ['es6', reload])
+  // }
 })

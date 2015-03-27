@@ -1,4 +1,4 @@
-_Coffee = _Coffee || {
+window._Coffee = window._Coffee || {
   # Array
   shuffle: (array)->
     tmp
