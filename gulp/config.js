@@ -13,8 +13,13 @@ module.exports = {
     }
   }
 
+  ,watch: {
+    files: [dstPath+'**/*.html', dstPath+'assets/shaders/**']
+  }
+
   ,coffee: {
     src: srcPath+'scripts/**/*.coffee'
+    ,source: srcPath+'scripts/main.coffee'
     ,dst: dstPath+'assets/scripts/'
     ,opts: {
       bare: true
