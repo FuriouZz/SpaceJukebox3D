@@ -1,4 +1,6 @@
-SPACE.ENV        = 'development'
+window.SPACE = window.SPACE || {}
+
+SPACE.ENV = 'development'
 
 # PIXI.JS
 SPACE.FPS        = 30
@@ -33,6 +35,5 @@ SPACE.LOG        = (log, styles='')->
 SPACE.TODO       = (message)->
   SPACE.LOG('%cTODO | ' + message, 'color: #0088FF')
 
-SPACE.ASSERT     = (condition, action)->
-  action() if condition
-  return condition
+# ENVIRONMENTS
+SPACE.DEFAULT = {}

@@ -1,4 +1,4 @@
-window._THREE = window._THREE || {
+HELPER.THREE =
   HermiteCurve: (pts)->
     path = new THREE.CurvePath()
     path.add(new THREE.HermiteBezierCurve3(pts[0], pts[0], pts[1], pts[2]))
@@ -6,7 +6,6 @@ window._THREE = window._THREE || {
       path.add(new THREE.HermiteBezierCurve3(pts[i], pts[i+1], pts[i+2], pts[i+3]))
     path.add(new THREE.HermiteBezierCurve3(pts[pts.length-3], pts[pts.length-2], pts[pts.length-1], pts[pts.length-1]))
     return path
-}
 
 THREE.Curve.Utils.tangentHermiteBezier = ( y0, y1, y2, y3, mu, tension, bias )->
     mu2 = mu * mu

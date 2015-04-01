@@ -26,7 +26,7 @@ class SPACE.SearchEngine
     @list          = document.querySelector('.search .list')
     @listContainer = document.querySelector('.search ul')
 
-    @setState(SearchEngineState.CLOSED)
+    @setState(ENUM.SearchEngineState.CLOSED)
     @_events()
 
   _events: ->
@@ -39,30 +39,30 @@ class SPACE.SearchEngine
 
   _eKeypress: (e)=>
     switch(e.keyCode)
-      when Keyboard.ENTER
+      when ENUM.Keyboard.ENTER
         if @input.value.length == 0
-          if @state == SearchEngineState.CLOSED
-            @setState(SearchEngineState.OPENED)
+          if @state == ENUM.SearchEngineState.CLOSED
+            @setState(ENUM.SearchEngineState.OPENED)
           else
-            @setState(SearchEngineState.CLOSED)
-        else if @state == SearchEngineState.SEARCH and @focused
-          @setState(SearchEngineState.TRACK_SELECTED)
-        else if @state == SearchEngineState.TRACK_SELECTED
+            @setState(ENUM.SearchEngineState.CLOSED)
+        else if @state == ENUM.SearchEngineState.SEARCH and @focused
+          @setState(ENUM.SearchEngineState.TRACK_SELECTED)
+        else if @state == ENUM.SearchEngineState.TRACK_SELECTED
           @add()
 
-      when Keyboard.UP
-        @up() if @state == SearchEngineState.SEARCH
+      when ENUM.Keyboard.UP
+        @up() if @state == ENUM.SearchEngineState.SEARCH
 
-      when Keyboard.DOWN
-        @down() if @state == SearchEngineState.SEARCH
+      when ENUM.Keyboard.DOWN
+        @down() if @state == ENUM.SearchEngineState.SEARCH
 
-      when Keyboard.ESC, Keyboard.DELETE
-        if @state == SearchEngineState.SEARCH
-          @setState(SearchEngineState.OPENED)
-        else if @state == SearchEngineState.TRACK_SELECTED
-          @setState(SearchEngineState.SEARCH)
+      when ENUM.Keyboard.ESC, ENUM.Keyboard.DELETE
+        if @state == ENUM.SearchEngineState.SEARCH
+          @setState(ENUM.SearchEngineState.OPENED)
+        else if @state == ENUM.SearchEngineState.TRACK_SELECTED
+          @setState(ENUM.SearchEngineState.SEARCH)
         else
-          @setState(SearchEngineState.CLOSED)
+          @setState(ENUM.SearchEngineState.CLOSED)
 
       else
         return false
@@ -70,7 +70,7 @@ class SPACE.SearchEngine
   setState: (state)->
     @state = state
     switch @state
-      when SearchEngineState.OPENED
+      when ENUM.SearchEngineState.OPENED
         @el.classList.remove('hidden')
         @el.classList.remove('search_open')
 
@@ -79,9 +79,9 @@ class SPACE.SearchEngine
         @input.focus()
 
         @reset()
-      when SearchEngineState.CLOSED
+      when ENUM.SearchEngineState.CLOSED
         @el.classList.add('hidden')
-      when SearchEngineState.SEARCH
+      when ENUM.SearchEngineState.SEARCH
         @el.classList.add('search_open')
 
         @input.disabled = true
@@ -92,7 +92,7 @@ class SPACE.SearchEngine
 
         @focused.classList.remove('selected') if @focused
         @el.classList.remove('item_selected')
-      when SearchEngineState.TRACK_SELECTED
+      when ENUM.SearchEngineState.TRACK_SELECTED
         @focused.classList.add('selected')
         @el.classList.add('item_selected')
 
@@ -122,7 +122,7 @@ class SPACE.SearchEngine
       else
         @focused = null
     else
-      @setState(SearchEngineState.OPENED)
+      @setState(ENUM.SearchEngineState.OPENED)
       # $([@listContainer, @input]).css('transform', 'translate(0, 0)')
 
   reset: ->
@@ -143,7 +143,7 @@ class SPACE.SearchEngine
 
     setTimeout(=>
       @focused.remove()
-      @setState(SearchEngineState.SEARCH)
+      @setState(ENUM.SearchEngineState.SEARCH)
       @up() if @focused.nextSibling
       @focus()
     , 500)
@@ -197,5 +197,5 @@ class SPACE.SearchEngine
         """
         @results.push(track)
         @listContainer.appendChild(li)
-      @setState(SearchEngineState.SEARCH)
+      @setState(ENUM.SearchEngineState.SEARCH)
     )

@@ -42,7 +42,7 @@ class SPACE.Equalizer extends THREE.Group
       mirror:            true
       linewidth:         2
 
-    opts               = _Coffee.merge(defaults, opts)
+    opts               = HELPER.Coffee.merge(defaults, opts)
     @minLength         = opts.minLength
     @maxLength         = opts.maxLength
     @radius            = opts.radius
@@ -66,7 +66,7 @@ class SPACE.Equalizer extends THREE.Group
     @updateValues()
 
   _events: ->
-    document.addEventListener(TRACK.IS_STOPPED.type, @_eTrackIsStopped)
+    document.addEventListener(EVENT.Track.IS_STOPPED.type, @_eTrackIsStopped)
 
   _eTrackIsStopped: =>
     @mute()
@@ -112,7 +112,7 @@ class SPACE.Equalizer extends THREE.Group
     @updateGeometries()
 
   updateValues: =>
-    if SPACE.Jukebox.state == JukeboxState.IS_PLAYING and SPACE.Jukebox.waveformData.mono
+    if SPACE.Jukebox.state == ENUM.JukeboxState.IS_PLAYING and SPACE.Jukebox.waveformData.mono
       @setValues(SPACE.Jukebox.waveformData.mono)
       # @mute()
     setTimeout(@updateValues, @interpolationTime * .5)

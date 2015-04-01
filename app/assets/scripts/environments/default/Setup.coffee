@@ -19,15 +19,23 @@ class SPACE.DEFAULT.Setup extends THREE.Group
     callback() if callback
 
   _events: ->
-    document.addEventListener(JUKEBOX.IS_STOPPED.type, @_eJukeboxIsStopped)
+    document.addEventListener(EVENT.Jukebox.IS_STOPPED.type, @_eJukeboxIsStopped)
+    document.addEventListener(EVENT.Cover.TEXTURES_LOADED.type, @_eCoverTexturesLoaded)
 
   _eJukeboxIsStopped: (e)=>
+    @_launch()
+
+  _eCoverTexturesLoaded: (e)=>
+    @_launch()
+
+  _launch: ->
     for track in @playlist
       @jukebox.add(track)
 
   setup: ->
     @fetchTracks()
     @cover = new SPACE.DEFAULT.Cover()
+    @add(@cover)
     @_events()
 
   fetchTracks: ->
@@ -35,9 +43,20 @@ class SPACE.DEFAULT.Setup extends THREE.Group
     req.open('GET', 'resources/playlist.json', true)
     req.onload = (e)=>
       @playlist = JSON.parse(e.target.response)
-      for track in @playlist
-        @jukebox.add(track)
-      $('#wrapper').css('background-image', 'url(resources/covers/'+@playlist[0].cover+')')
+
+      @cover.load(@playlist)
+
+
+
+      # for track in @playlist
+      #   @jukebox.add(track)
+
+
+
+
+        # $('#cover ul').append('<li></li>')
+        # $('#cover ul li').css('background-image', 'url(resources/covers/'+track.cover+')')
+      # $('#cover ul li:first-child').addClass('active')
     req.send(null)
 
   # next: ->

@@ -29,7 +29,7 @@ class SPACE.Jukebox
     @waveformData =
       mono: null
       stereo: null
-    @setAirportState(AirportState.IDLE)
+    @setAirportState(ENUM.AirportState.IDLE)
 
     # Initialize the equalizer
     @eqlzr = new SPACE.Equalizer({
@@ -59,20 +59,20 @@ class SPACE.Jukebox
     @playlist     = []
 
     @_events()
-    @setState(JukeboxState.IS_STOPPED)
+    @setState(ENUM.JukeboxState.IS_STOPPED)
 
   _events: ->
-    document.addEventListener(TRACK.IS_PLAYING.type, @_eTrackIsPlaying)
-    document.addEventListener(TRACK.IS_STOPPED.type, @_eTrackIsStopped)
+    document.addEventListener(EVENT.Track.IS_PLAYING.type, @_eTrackIsPlaying)
+    document.addEventListener(EVENT.Track.IS_STOPPED.type, @_eTrackIsStopped)
 
   _eTrackIsPlaying: (e)=>
-    @setState(JukeboxState.IS_PLAYING)
+    @setState(ENUM.JukeboxState.IS_PLAYING)
 
   _eTrackIsStopped: (e)=>
     if @playlist.length > 0
-      @setState(JukeboxState.TRACK_STOPPED)
+      @setState(ENUM.JukeboxState.TRACK_STOPPED)
     else
-      @setState(JukeboxState.IS_STOPPED)
+      @setState(ENUM.JukeboxState.IS_STOPPED)
 
   _createTrack: (data)->
     # spaceship       = new SPACE.Spaceship(@equalizer.center, @equalizer.radius)
@@ -85,7 +85,7 @@ class SPACE.Jukebox
     @playlist.push(track)
     # @airport.push(spaceship)
 
-    _H.trigger(JUKEBOX.TRACK_ADDED, { track: track })
+    HELPER.trigger(EVENT.Jukebox.TRACK_ADDED, { track: track })
     SPACE.LOG('Sound added: ' + track.data.title)
 
   _calcPending: (position)->
@@ -120,28 +120,28 @@ class SPACE.Jukebox
   setState: (state)->
     @state = state
     switch(state)
-      when JukeboxState.IS_PLAYING
+      when ENUM.JukeboxState.IS_PLAYING
         @current.whileplayingCallback = @_whileplaying
       else
         if @current
           @current.destruct()
         @current = null
 
-        if @state == JukeboxState.IS_STOPPED
+        if @state == ENUM.JukeboxState.IS_STOPPED
           console.log 'STOPPED'
-          _H.trigger(JUKEBOX.IS_STOPPED)
+          HELPER.trigger(EVENT.Jukebox.IS_STOPPED)
 
   setAirportState: (state)=>
     @airportState = state
     switch(state)
-      when AirportState.IDLE
+      when ENUM.AirportState.IDLE
         SPACE.LOG('Waiting for new spaceship')
-      when AirportState.SENDING
+      when ENUM.AirportState.SENDING
         spaceship = @airport.shift()
         spaceship.setState(SpaceshipState.LAUNCHED)
         setTimeout(@setAirportState, 60 * 1000)
       else
-        @setAirportState(AirportState.IDLE)
+        @setAirportState(ENUM.AirportState.IDLE)
 
   update: (delta)->
     if @current == null

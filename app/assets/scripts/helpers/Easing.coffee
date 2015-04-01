@@ -1,4 +1,4 @@
-window._Easing = window._Easing || {
+HELPER.Easing =
 
   #
   #  Easing function inspired from AHEasing
@@ -187,5 +187,3 @@ window._Easing = window._Easing || {
       return 0.5 * @BounceEaseIn(p*2)
     else
       return 0.5 * @BounceEaseOut(p * 2 - 1) + 0.5
-
-}

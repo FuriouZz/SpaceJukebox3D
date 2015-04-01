@@ -4,8 +4,6 @@ class SPACE.SoundCloud
   redirect_uri: null
   token:        null
 
-  @IS_CONNECTED: (-> return new Event('soundcloud_connected'))()
-
   constructor: (id, redirect_uri)->
     SC.initialize({
       client_id: id
@@ -40,7 +38,7 @@ class SPACE.SoundCloud
       document.cookie = "soundcloud_token=" + @token
       document.cookie = "soundcloud_connected=true"
       document.querySelector('.login').classList.remove('show')
-      _H.trigger(SPACE.SoundCloud.IS_CONNECTED)
+      HELPER.trigger(EVENT.SoundCloud.IS_CONNECTED)
     )
 
   pathOrUrl: (path, callback)->

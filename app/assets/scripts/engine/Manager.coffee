@@ -53,20 +53,26 @@ class SPACE.SceneManager
     if !@currentScene or @currentScene.isPaused()
         return
 
+    # c = Date.now()
+    @currentScene.update(@_clock.getDelta() * 1000)
+    # @currentScene.update(c - @_tick);
+    # @_tick = c
+
     @renderer.render( @currentScene, @camera )
 
     @_stats.update() if SPACE.ENV == 'development'
 
   _update: =>
-    setTimeout(@_update, 1000 / SPACE.FPS)
+    # setTimeout(@_update, 1000 / SPACE.FPS)
 
-    if !@currentScene or @currentScene.isPaused()
-        return
+    # if !@currentScene or @currentScene.isPaused()
+    #     return
 
-    c = Date.now()
-    # @currentScene.update(@_clock.getDelta())
-    @currentScene.update(c - @_tick);
-    @_tick = c
+    # c = Date.now()
+    # # @currentScene.update(@_clock.getDelta())
+    # @currentScene.update(c - @_tick);
+    # console.log c - @_tick
+    # @_tick = c
 
   createScene: (identifier, aScene, interactive)->
     if @_scenes[identifier]

@@ -58,7 +58,6 @@ class SPACE.WebAudioAPI
     @position  = if typeof position == 'number' then position else @position or 0
     @startTime = @ctx.currentTime - (@position or 0)
     @src.start(@ctx.currentTime, @position)
-    console.log @src
     @isPlaying = true
     @onplay() if @onplay
 

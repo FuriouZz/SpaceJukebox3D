@@ -1,6 +1,4 @@
-window._H = window._H || {
-
-  # Event
+window.HELPER = window.HELPER ||
   trigger: (e, object)->
     e.object = object
     document.dispatchEvent(e)
@@ -26,5 +24,3 @@ window._H = window._H || {
     else if typeof value is 'number'
       return value * window.devicePixelRatio
     return false
-
-}

@@ -1,33 +1,25 @@
-window.Keyboard =
-  ENTER:  13
-  UP:     38
-  DOWN:   40
-  ESC:    27
-  DELETE: 46
-
-window.SpaceshipState =
-  IDLE:     'idle'
-  LAUNCHED: 'launched'
-  IN_LOOP:  'in_loop'
-  ARRIVED:  'arrived'
-
-window.SearchEngineState =
-  OPENED: 'opened'
-  CLOSED: 'closed'
-  SEARCH: 'search'
-  TRACK_SELECTED: 'track_selected'
-
-window.JukeboxState =
-  IS_PLAYING: 'is_playing'
-  IS_STOPPED: 'is_stopped'
-  TRACK_STOPPED: 'track_stopped'
-
-window.AirportState =
-  IDLE: 'idle'
-  SENDING: 'sending'
-
-Object.freeze(Keyboard)
-Object.freeze(SpaceshipState)
-Object.freeze(SearchEngineState)
-Object.freeze(JukeboxState)
-Object.freeze(AirportState)
+window.ENUM =
+  Keyboard:
+    ENTER: 13
+    UP: 38
+    DOWN: 40
+    ESC: 27
+    DELETE: 46
+  SpaceshipState:
+    IDLE: 'spaceshipstate_idle'
+    LAUNCHED: 'spaceshipstate_launched'
+    IN_LOOP: 'spaceshipstate_inloop'
+    ARRIVED: 'spaceshipstate_arrived'
+  SearchEngineState:
+    OPENED: 'searchenginestate_opened'
+    CLOSED: 'searchenginestate_closed'
+    SEARCH: 'searchenginestate_search'
+    TRACK_SELECTED: 'searchenginestate_trackselected'
+  JukeboxState:
+    IS_PLAYING: 'jukeboxstate_isplaying'
+    IS_STOPPED: 'jukeboxstate_isstopped'
+    TRACK_STOPPED: 'jukeboxstate_trackstopped'
+  AirportState:
+    IDLE: 'airportstate_idle'
+    SENDING: 'airportstate_sending'
+Object.freeze(ENUM)

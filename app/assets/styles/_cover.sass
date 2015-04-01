@@ -1,31 +1,68 @@
-#cover
-    width: 100%
+#information
+  width: 100%
+  height: 100%
+  position: absolute
+  top: 0
+  left: 0
+  z-index: 2
+  white-space: nowrap
+  text-align: center
+
+  &:before
+    content: ""
+    display: inline-block
     height: 100%
-    position: absolute
-    top: 0
-    left: 0
-    z-index: 1
-    white-space: nowrap
+    vertical-align: middle
+    margin-left: -0.25em
+
+  div
+    display: inline-block
+    width: 300px
+    vertical-align: middle
     text-align: center
 
-    &:before
-        content: ""
-        display: inline-block
-        height: 100%
-        vertical-align: middle
-        margin-left: -0.25em
+  h1
+    font-size: 22px
+    font-weight: bold
+    white-space: normal
+  h2
+    font-size: 14px
+    font-weight: 300
+    white-space: normal
 
-    div
-        display: inline-block
-        width: 300px
-        vertical-align: middle
-        text-align: center
+#cover
+  display: none
+  +size(100%)
+  position: absolute
+  z-index: 0
 
-        h1
-            font-size: 22px
-            font-weight: bold
-            white-space: normal
-        h2
-            font-size: 14px
-            font-weight: 300
-            white-space: normal
+  ul
+    +size(100%)
+    padding: 0
+    margin: 0
+    position: absolute
+    bottom: 0
+
+  li
+    +size(100%)
+    display: block
+    +transition(all 1ms)
+    +transform(scale(1.0))
+    background-size: cover
+    background-position: center
+    background-repeat: no-repeat
+
+  ul.blurried
+    z-index: 0
+  ul.cards
+    display: none
+    z-index: 1
+
+  ul.blurried li
+    position: absolute
+    +filter(blur(10px))
+
+  ul.cards li
+    +transform(scale(0.75))
+    &.active
+      +transform(scale(1.0))

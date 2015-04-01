@@ -19,12 +19,12 @@ class SPACE.MainScene extends SPACE.Scene
 
     # @setup() if @SC.isConnected()
 
-    env = new SPACE.DEFAULT.Setup()
-    env.onEnter()
-    @add(env)
+    @env = new SPACE.DEFAULT.Setup()
+    @env.onEnter()
+    @add(@env)
 
   _events: ->
-    document.addEventListener(SPACE.SoundCloud.IS_CONNECTED.type, @setup)
+    document.addEventListener(EVENT.SoundCloud.IS_CONNECTED.type, @setup)
 
   setup: =>
     SPACE.Jukebox         = new SPACE.Jukebox(this)

@@ -1,4 +1,4 @@
-window._Math = window._Math || {
+HELPER.Math =
   angleBetweenPoints: (first, second) ->
     height = second.y - first.y
     width  = second.x - first.x
@@ -38,4 +38,3 @@ window._Math = window._Math || {
     a3 = -2*mu3 + 3*mu2;
     `
     return(a0*y1+a1*m0+a2*m1+a3*y2)
-}
