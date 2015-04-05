@@ -9,7 +9,7 @@ uniform vec2 resolution;
 // #endif
 
 void main() {
-    vUv = uv;
+    vUv    = uv;
 
     // vec2 pos = resolution * vUv;
     // float divSize = 150.0;

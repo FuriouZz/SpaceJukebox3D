@@ -114,7 +114,6 @@ class SPACE.Equalizer extends THREE.Group
   updateValues: =>
     if SPACE.Jukebox.state == ENUM.JukeboxState.IS_PLAYING and SPACE.Jukebox.waveformData.mono
       @setValues(SPACE.Jukebox.waveformData.mono)
-      # @mute()
     setTimeout(@updateValues, @interpolationTime * .5)
 
   updateGeometries: (create=false)->

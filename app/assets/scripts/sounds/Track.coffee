@@ -59,6 +59,10 @@ class SPACE.Track
     HELPER.trigger(EVENT.Track.IS_PLAYING, { track: this })
 
   _onfinish: =>
+    for data, i in @waveformData.mono
+      data      = 0
+      @datas[i] = 0
+
     HELPER.trigger(EVENT.Track.IS_STOPPED, { track: this })
     @api.stop()
 

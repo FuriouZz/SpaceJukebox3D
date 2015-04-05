@@ -40,6 +40,7 @@ class SPACE.Jukebox
       absolute: false
       lineForceDown: .5
       lineForceUp: 1
+      interpolationTime: 150
     })
     @group.add(@eqlzr)
 
@@ -51,6 +52,7 @@ class SPACE.Jukebox
       absolute: false
       lineForceDown: .5
       lineForceUp: 1
+      interpolationTime: 150
     })
     @group.add(@equalizer)
 
@@ -64,15 +66,23 @@ class SPACE.Jukebox
   _events: ->
     document.addEventListener(EVENT.Track.IS_PLAYING.type, @_eTrackIsPlaying)
     document.addEventListener(EVENT.Track.IS_STOPPED.type, @_eTrackIsStopped)
+    # document.addEventListener(EVENT.Cover.TRANSITION_ENDED.type, @_eTransitionEnded)
 
   _eTrackIsPlaying: (e)=>
     @setState(ENUM.JukeboxState.IS_PLAYING)
 
   _eTrackIsStopped: (e)=>
-    if @playlist.length > 0
-      @setState(ENUM.JukeboxState.TRACK_STOPPED)
-    else
-      @setState(ENUM.JukeboxState.IS_STOPPED)
+    HELPER.trigger(EVENT.Jukebox.WILL_PLAY)
+    setTimeout(=>
+      if @playlist.length > 0
+        @setState(ENUM.JukeboxState.TRACK_STOPPED)
+      else
+        @setState(ENUM.JukeboxState.IS_STOPPED)
+    , 1750)
+
+  # _eTransitionEnded: (e)=>
+  #   if @playlist.length > 0 && @time > @delay
+  #     @next() if @current == null
 
   _createTrack: (data)->
     # spaceship       = new SPACE.Spaceship(@equalizer.center, @equalizer.radius)
@@ -128,7 +138,6 @@ class SPACE.Jukebox
         @current = null
 
         if @state == ENUM.JukeboxState.IS_STOPPED
-          console.log 'STOPPED'
           HELPER.trigger(EVENT.Jukebox.IS_STOPPED)
 
   setAirportState: (state)=>
@@ -152,7 +161,7 @@ class SPACE.Jukebox
     #   track.update(delta)
     # @current.update(delta) if @current
 
-    if @playlist.length > 0 && @time > @delay
+    if @playlist.length > 0 && @time > @delay# && @state == ENUM.JukeboxState.IS_STOPPED
       @next() if @current == null
 
   ##########################

@@ -16,7 +16,10 @@
   <body>
     <div id="wrapper">
       <div id="cover">
-        <ul class="blurried"></ul>
+        <ul class="blurried">
+          <li><div style="background-image: url(http://localhost:3000/resources/covers/all_day_720.png);"></div></li>
+          <li><div style="background-image: url(http://localhost:3000/resources/covers/blame_it_on_me_720.png);"></div></li>
+        </ul>
         <ul class="cards"></ul>
       </div>
       <div id="information">
@@ -46,7 +49,14 @@
     <script>window.SC || document.write('<script src="vendors/soundcloud/sdk.js"><\/script>')</script>
 
     <script src="vendors/threejs/build/three.js"></script>
-    <script src="vendors/dancer.js/dancer.js"></script>
+    <script src="vendors/threejs/postprocessing/EffectComposer.js"></script>
+    <script src="vendors/threejs/postprocessing/RenderPass.js"></script>
+    <script src="vendors/threejs/postprocessing/ShaderPass.js"></script>
+    <script src="vendors/threejs/postprocessing/MaskPass.js"></script>
+    <script src="vendors/threejs/shaders/CopyShader.js"></script>
+    <script src="vendors/threejs/shaders/HorizontalBlurShader.js"></script>
+    <script src="vendors/threejs/shaders/VerticalBlurShader.js"></script>
+    <!-- // <script src="vendors/dancer.js/dancer.js"></script> -->
     <!-- // <script src="vendors/soundmanager2/script/soundmanager2-nodebug-jsmin.js"></script> -->
 
     <script src="vendors/jquery/dist/jquery.min.js"></script>

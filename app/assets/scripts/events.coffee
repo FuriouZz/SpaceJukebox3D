@@ -8,6 +8,7 @@ window.EVENT =
     IS_PLAYING:         new Event('jukebox_is_playing')
     IS_STOPPED:         new Event('jukebox_is_stopped')
     IS_SEARCHING:       new Event('jukebox_is_searching')
+    WILL_PLAY:          new Event('jukebox_will_play')
   Track:
     IS_PLAYING: new Event('track_is_playing')
     IS_PAUSED:  new Event('track_is_paused')
@@ -15,5 +16,6 @@ window.EVENT =
   SoundCloud:
     IS_CONNECTED: new Event('soundcloud_connected')
   Cover:
-    TEXTURES_LOADED: new Event('cover_textures_loaded')
+    TEXTURES_LOADED:  new Event('cover_textures_loaded')
+    TRANSITION_ENDED: new Event('cover_transition_ended')
 Object.freeze(EVENT)

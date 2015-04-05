@@ -48,6 +48,8 @@ class SPACE.WebAudioAPI
     if @src
       @src.stop(0)
       @src       = null
+      @src1.stop(0)
+      @src1      = null
       @processor.onaudioprocess = null
       @position  = @ctx.currentTime - @startTime
       @isPlaying = false
@@ -57,15 +59,24 @@ class SPACE.WebAudioAPI
     @_connect()
     @position  = if typeof position == 'number' then position else @position or 0
     @startTime = @ctx.currentTime - (@position or 0)
-    @src.start(@ctx.currentTime, @position)
+
+    @src1.start(@ctx.currentTime, @position)
+
+    setTimeout(=>
+        @src.start(@ctx.currentTime - 0.15 * 0.5, @position)
+    , 150)
+
     @isPlaying = true
     @onplay() if @onplay
 
   stop: ->
-    if @src
+    if @src and @src1
       @src.stop()
       @src.disconnect(0)
       @src       = null
+      @src1.stop()
+      @src1.disconnect(0)
+      @src1      = null
       @processor.onaudioprocess = null
       @isPlaying = false
       @position  = 0
@@ -117,16 +128,22 @@ class SPACE.WebAudioAPI
     @gainNode = @ctx.createGain()
 
     @src.connect(@analyser)
-    @src.connect(@gainNode)
+    # @src.connect(@gainNode)
     @analyser.connect(@processor)
     @processor.connect(@ctx.destination)
-    @gainNode.connect(@ctx.destination)
+    # @gainNode.connect(@ctx.destination)
 
     @processor.onaudioprocess = @_onAudioProcess
     @processor.api = @
 
     @_oldBrowser()
     @volume(0)
+
+    # TEST
+    @src1        = @ctx.createBufferSource()
+    @src1.buffer = @buffer
+    @src1.connect(@gainNode)
+    @gainNode.connect(@ctx.destination)
 
   _disconnect: ->
     @analyser.disconnect(0)  if @analyser
@@ -137,7 +154,9 @@ class SPACE.WebAudioAPI
 
   _onEnded: =>
     @src.disconnect(0)
+    @src1.disconnect(0)
     @src                      = null
+    @src1                     = null
     @processor.onaudioprocess = null
     @isPlaying                = false
     @onended() if @onended
