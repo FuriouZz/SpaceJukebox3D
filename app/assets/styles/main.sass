@@ -11,6 +11,12 @@ body
   overflow: hidden
   font-family: "Lato"
   font-weight: 300
+  +transition(color 500ms)
+  color: #FFFFFF
+
+a
+  +transition(color 500ms)
+  color: #F7E1CC
 
 #wrapper, canvas
   position: absolute
@@ -68,3 +74,46 @@ footer
 
 #stats
   z-index: 10
+
+#loading
+  +size(100%)
+  position: absolute
+  top: 0
+  left: 0
+  background-color: rgba(0, 0, 0, 0.75)
+  color: white
+  z-index: 2
+  cursor: pointer
+  +transition(opacity 250ms ease-in 0ms, visibility 0ms ease-in 0ms)
+
+  &.hidden
+    +transition(opacity 250ms ease-in 0ms, visibility 0ms ease-in 250ms)
+    visibility: hidden
+    opacity: 0
+
+  &.ready i.icn
+    opacity: 1
+
+  i.icn
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    margin: auto
+    opacity: 0
+
+    &.play
+      left: 20px
+
+  p
+    width: 200px
+    position: absolute
+    bottom: 100px
+    left: 0
+    right: 0
+    margin: auto
+    text-align: center
+    text-transform: uppercase
+    font-size: 12px
+    letter-spacing: 1px

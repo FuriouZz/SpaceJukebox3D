@@ -22,4 +22,9 @@ window.ENUM =
   AirportState:
     IDLE: 'airportstate_idle'
     SENDING: 'airportstate_sending'
+  AudioState:
+    IS_LOADING: 'audio_is_loading'
+    IS_PLAYING: 'audio_is_playing'
+    IS_PAUSED: 'audio_is_paused'
+    IS_ENDED: 'audio_is_ended'
 Object.freeze(ENUM)

@@ -40,7 +40,7 @@ class SPACE.Jukebox
       absolute: false
       lineForceDown: .5
       lineForceUp: 1
-      interpolationTime: 150
+      interpolationTime: 250
     })
     @group.add(@eqlzr)
 
@@ -52,7 +52,7 @@ class SPACE.Jukebox
       absolute: false
       lineForceDown: .5
       lineForceUp: 1
-      interpolationTime: 150
+      interpolationTime: 250
     })
     @group.add(@equalizer)
 
@@ -73,12 +73,12 @@ class SPACE.Jukebox
 
   _eTrackIsStopped: (e)=>
     HELPER.trigger(EVENT.Jukebox.WILL_PLAY)
-    setTimeout(=>
-      if @playlist.length > 0
-        @setState(ENUM.JukeboxState.TRACK_STOPPED)
-      else
-        @setState(ENUM.JukeboxState.IS_STOPPED)
-    , 1750)
+    # setTimeout(=>
+    if @playlist.length > 0
+      @setState(ENUM.JukeboxState.TRACK_STOPPED)
+    else
+      @setState(ENUM.JukeboxState.IS_STOPPED)
+    # , 50)
 
   # _eTransitionEnded: (e)=>
   #   if @playlist.length > 0 && @time > @delay

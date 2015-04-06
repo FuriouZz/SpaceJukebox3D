@@ -24,22 +24,46 @@ class SPACE.DEFAULT.Cover extends THREE.Group
 
   _events: ->
     document.addEventListener(EVENT.Track.IS_PLAYING.type, @_eTrackIsPlaying)
+    document.addEventListener(EVENT.Track.IS_PAUSED.type, @_eTrackIsPaused)
+    document.addEventListener(EVENT.Track.IS_LOADED.type, @_eTrackIsLoaded)
     document.addEventListener(EVENT.Jukebox.WILL_PLAY.type, @_eJukeboxWillPlay)
+
+    $('#loading, #information span').on 'click', (e)->
+      if $('#loading').hasClass('ready') and window.WebAudioAPI
+        e.preventDefault()
+        window.WebAudioAPI.play()
+        return false
 
   _eJukeboxWillPlay: (e)=>
     @next()
+    $('#information h1').addClass('hidden')
+    $('#information h2').addClass('hidden')
 
   _eTransitionEnded: (e)=>
     HELPER.trigger(EVENT.Cover.TRANSITION_ENDED)
 
   _eTrackIsPlaying: (e)=>
+    $('#information h1').removeClass('hidden')
+    $('#information h2').removeClass('hidden')
+    $('#loading').addClass('hidden')
+
+  _eTrackIsPaused: (e)=>
+    $('#loading').removeClass('hidden')
+    $('#loading i.icn').removeClass('play')
+    $('#loading i.icn').addClass('pause')
+
+  _eTrackIsLoaded: (e)=>
+    unless $('#loading').hasClass('ready')
+      $('#loading').addClass('ready')
+      $('#loading p').html('Tap in the middle<br>to play or pause')
+
     track    = e.object.track
     title    = track.data.title
     username = track.data.author
     user_url = track.data.author_url
 
     $('#information h1').html(title)
-    $('#information h2').html('by <a href="'+user_url+'">'+username+'</a>')
+    $('#information h2').html('by <a target="_blank" href="'+user_url+'">'+username+'</a>')
 
     css = """
         a { color: """+track.data.color1+""" !important; }
@@ -63,7 +87,6 @@ class SPACE.DEFAULT.Cover extends THREE.Group
     $('.blurried li div').css({ height: window.innerHeight })
     $('.blurried li div').last().css('background-image', 'url(resources/covers/'+track.data.cover+')')
     $('.blurried li div').first().css('background-image', 'url(resources/covers/'+nextTrack.cover+')')
-    # @setCovers(track.data, nextTrack)
 
   _setup: ->
     @loadingManager        = new THREE.LoadingManager()
@@ -143,117 +166,8 @@ class SPACE.DEFAULT.Cover extends THREE.Group
     @plane.material.uniforms.resolution.value.y = height
     @plane.scale.set(width, height, 1)
 
-  #   @test(current)
-
-  # test: (current)->
-  #   imageWidth  = current.image.width
-  #   imageHeight = current.image.height
-
-  #   # Initialize renderer
-  #   unless @cameraRTT and @sceneRTT and @rtTexture# and @cameraRTT1 and @sceneRTT1 and @rtTexture1
-  #     @cameraRTT = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-  #     # @cameraRTT = new THREE.OrthographicCamera( imageWidth / - 2, imageWidth / 2, imageHeight / 2, imageHeight / - 2, -10000, 10000 )
-  #     @cameraRTT.position.setZ(600)
-  #     # @cameraRTT1 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-  #     # @cameraRTT1 = new THREE.OrthographicCamera( imageWidth / - 2, imageWidth / 2, imageHeight / 2, imageHeight / - 2, -10000, 10000 )
-  #     # @cameraRTT1.position.setZ(600)
-
-  #     @sceneRTT = new THREE.Scene()
-  #     # @sceneRTT1 = new THREE.Scene()
-
-  #     @rtTexture  = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat })
-  #     # @rtTexture1 = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat })
-
-
-  #     @hBlur = new THREE.ShaderPass(THREE.HorizontalBlurShader);
-  #     @hBlur.enabled = true;
-  #     @hBlur.uniforms.h.value = 1 / window.innerHeight;
-
-  #     @vBlur = new THREE.ShaderPass(THREE.VerticalBlurShader);
-  #     @vBlur.enabled = true;
-  #     @vBlur.uniforms.v.value = 1 / window.innerWidth;
-
-  #     @renderPass = new THREE.RenderPass(@sceneRTT, @cameraRTT)
-
-  #     @effectCopy = new THREE.ShaderPass(THREE.CopyShader)
-
-  #     @composer   = new THREE.EffectComposer(manager.renderer)
-  #     @composer.addPass(@renderPass)
-  #     @composer.addPass(@hBlur)
-  #     @composer.addPass(@vBlur)
-  #     @composer.addPass(@effectCopy)
-
-  #     console.log @composer
-
-  #   vertexShader   = @loader.cache.files['assets/shaders/cover.vert']
-  #   fragmentShader = @loader.cache.files['assets/shaders/gaussian_blur.frag']
-
-  #   material = new THREE.ShaderMaterial(
-  #     uniforms:
-  #       u_radius: { type: 'f', value: 10.0 }
-  #       u_texture0: { type: 't', value: [] }
-  #       u_direction: { type: 'v2', value: new THREE.Vector2() }
-  #       u_resolution: { type: 'v2', value: new THREE.Vector2() }
-  #     vertexShader: vertexShader
-  #     fragmentShader: fragmentShader
-  #   )
-
-  #   # material1 = new THREE.ShaderMaterial(
-  #   #   uniforms:
-  #   #     u_radius: { type: 'f', value: 10.0 }
-  #   #     u_texture0: { type: 't', value: [] }
-  #   #     u_direction: { type: 'v2', value: new THREE.Vector2() }
-  #   #     u_resolution: { type: 'v2', value: new THREE.Vector2() }
-  #   #   vertexShader: vertexShader
-  #   #   fragmentShader: fragmentShader
-  #   # )
-
-  #   plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(1.0, 1.0), material)
-  #   plane.position.z = -1
-  #   plane.scale.set(@plane.scale.x, @plane.scale.y, 1.0)
-  #   @sceneRTT.add(plane)
-
-  #   # plane1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(1.0, 1.0), material1)
-  #   # plane1.position.z = -1
-  #   # plane1.scale.set(@plane.scale.x, @plane.scale.y, 1.0)
-  #   # @sceneRTT1.add(plane1)
-
-  #   @textureLoader.load 'resources/covers/all_day.jpg', (texture)=>
-  #     plane.material.uniforms.u_texture0.value   = texture
-  #     plane.material.uniforms.u_direction.value  = new THREE.Vector2(0, 1)
-  #     plane.material.uniforms.u_resolution.value = @plane.material.uniforms.resolution.value
-
-  #     # plane1.material.uniforms.u_texture0.value   = @rtTexture
-  #     # plane1.material.uniforms.u_direction.value  = new THREE.Vector2(1, 0)
-  #     # plane1.material.uniforms.u_resolution.value = @plane.material.uniforms.resolution.value
-
-  #     # p = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), new THREE.MeshBasicMaterial( { color: 0xffffff, map: @rtTexture1 } ))
-  #     # p.position.z = 0
-  #     # p.scale.set(@plane.scale.x, @plane.scale.y, 1.0)
-  #     # @add(p)
-  #     # console.log p.material
-
-  #     setTimeout(=>
-  #       # @add(plane1)
-  #       @plane.material.uniforms.texture0.value = @rtTexture
-  #     , 3000)
-
-
-  #   # @rendererRTT.render(@sceneRTT, @cameraRTT, @rtTexture)
-
-  #   # console.log @plane.material.uniforms.texture0.value
-  #   # @plane.material.uniforms.texture0.value = new THREE.Texture(@rtTexture.image, @rtTexture.mapping)
-  #   # console.log @plane.material.uniforms.texture0.value
-
-  #   # setTimeout(=>
-  #   #   @plane.material.uniforms.texture0.value.__webglTexture = rtTexture.__webglTexture
-  #   #   # console.log @plane.material.uniforms.texture0.value
-  #   #   # console.log rtTexture
-  #   #   plane.position.z = -100
-  #   # , 5000)
-
   resize: ->
-    texture0      = @plane.material.uniforms.texture0
+    texture0      = @plane.material.uniforms.texture0.value
     textureWidth  = texture0.image.width
     textureHeight = texture0.image.height
 
@@ -269,8 +183,3 @@ class SPACE.DEFAULT.Cover extends THREE.Group
   update: (delta)->
     if @plane
       @plane.material.uniforms.aTime.value += delta * 0.001
-
-    # if @cameraRTT and @sceneRTT and @rtTexture# and @cameraRTT1 and @sceneRTT1 and @rtTexture1
-    #   @composer.render(0.01)
-      # manager.renderer.render(@sceneRTT, @cameraRTT, @rtTexture)
-      #manager.renderer.render(@sceneRTT1, @cameraRTT1, @rtTexture1)

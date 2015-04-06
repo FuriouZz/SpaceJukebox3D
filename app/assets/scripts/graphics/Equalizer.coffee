@@ -60,6 +60,8 @@ class SPACE.Equalizer extends THREE.Group
     @_values    = @mute(false)
     @_newValues = @mute(false)
 
+    @setRadius(@radius)
+
     @generate()
 
     @_events()
@@ -98,10 +100,13 @@ class SPACE.Equalizer extends THREE.Group
     @material   = new THREE.LineBasicMaterial({ color: @color, linewidth: @linewidth })
     @lines      = []
 
-    @update(0)
+    @refresh(0)
     @updateGeometries(true)
 
   update: (delta)->
+    @refresh(delta)
+
+  refresh: (delta)->
     @_time += delta
     t = @_time / @interpolationTime
     return if t > 1
@@ -114,7 +119,7 @@ class SPACE.Equalizer extends THREE.Group
   updateValues: =>
     if SPACE.Jukebox.state == ENUM.JukeboxState.IS_PLAYING and SPACE.Jukebox.waveformData.mono
       @setValues(SPACE.Jukebox.waveformData.mono)
-    setTimeout(@updateValues, @interpolationTime * .5)
+    setTimeout(@updateValues, @interpolationTime * 0.25)
 
   updateGeometries: (create=false)->
     for length, i in @_values
@@ -162,3 +167,10 @@ class SPACE.Equalizer extends THREE.Group
   removeLineFromParent: (index)->
     parent = @lines[index]
     parent.remove(@lines[index])
+
+  resize: ->
+    @setRadius(@radius)
+
+  setRadius: (radius)->
+    @radius = radius
+    @radius = window.innerWidth * 0.6 if window.innerWidth - 100 < radius

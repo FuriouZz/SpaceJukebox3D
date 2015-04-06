@@ -10,6 +10,7 @@ window.EVENT =
     IS_SEARCHING:       new Event('jukebox_is_searching')
     WILL_PLAY:          new Event('jukebox_will_play')
   Track:
+    IS_LOADED: new Event('track_is_loaded')
     IS_PLAYING: new Event('track_is_playing')
     IS_PAUSED:  new Event('track_is_paused')
     IS_STOPPED: new Event('track_is_stopped')

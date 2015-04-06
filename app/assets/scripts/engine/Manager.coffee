@@ -22,7 +22,7 @@ class SPACE.SceneManager
     # @camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     @renderer = new THREE.WebGLRenderer({antialias: true, alpha: false})
-    # @renderer.setPixelRatio(window.devicePixelRatio)
+    @renderer.setPixelRatio(window.devicePixelRatio)
     # @renderer.setClearColor(new THREE.Color(0x58b1ff))
     @renderer.setSize(window.innerWidth, window.innerHeight)
     # @renderer.shadowMapEnabled = true

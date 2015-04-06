@@ -1,6 +1,6 @@
 window.SPACE = window.SPACE || {}
 
-SPACE.ENV = 'development'
+SPACE.ENV = ''
 
 # PIXI.JS
 SPACE.FPS        = 30

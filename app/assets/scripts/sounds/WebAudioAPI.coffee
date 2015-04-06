@@ -15,6 +15,10 @@ class SPACE.WebAudioAPI
   time: 0
 
   isLoaded: false
+  isPlaying: false
+  isPaused: true
+
+  state: null
 
   ## Setup Web Audio API
   constructor: ->
@@ -25,7 +29,9 @@ class SPACE.WebAudioAPI
       if (App.env == 'development')
         console.log("HTML5 Web Audio API not supported. Switch to SoundManager2.")
 
-  setUrl: (url)->
+    @setState(ENUM.AudioState.IS_ENDED)
+
+  setUrl: (url, autoplay=false, callback)->
     @ctx = AudioContextObject
     @_oldBrowser()
 
@@ -37,9 +43,13 @@ class SPACE.WebAudioAPI
       @ctx.decodeAudioData(request.response, (buffer)=>
         @isLoaded = true
         @buffer = buffer
-        @play()
+        @play() if autoplay
+        callback() if callback
       , @_onError)
     request.send()
+
+  setState: (state)->
+    @state = state
 
   _onError: ->
     console.log 'ERROR'
@@ -48,46 +58,41 @@ class SPACE.WebAudioAPI
     if @src
       @src.stop(0)
       @src       = null
-      @src1.stop(0)
-      @src1      = null
       @processor.onaudioprocess = null
       @position  = @ctx.currentTime - @startTime
-      @isPlaying = false
+      @setState(ENUM.AudioState.IS_PAUSED)
+      @onpause() if @onpause
 
   play: (position)->
     return unless @isLoaded
+    if @state == ENUM.AudioState.IS_PLAYING
+      @pause()
+      return
+
     @_connect()
     @position  = if typeof position == 'number' then position else @position or 0
     @startTime = @ctx.currentTime - (@position or 0)
 
-    @src1.start(@ctx.currentTime, @position)
+    @src.start(@ctx.currentTime, @position)
 
-    setTimeout(=>
-        @src.start(@ctx.currentTime - 0.15 * 0.5, @position)
-    , 150)
-
-    @isPlaying = true
+    @setState(ENUM.AudioState.IS_PLAYING)
     @onplay() if @onplay
 
   stop: ->
-    if @src and @src1
-      @src.stop()
-      @src.disconnect(0)
+    if @src
+      @src.stop(0)
       @src       = null
-      @src1.stop()
-      @src1.disconnect(0)
-      @src1      = null
       @processor.onaudioprocess = null
-      @isPlaying = false
       @position  = 0
       @startTime = 0
+      @setState(ENUM.AudioState.IS_STOPPED)
 
   volume: (volume)->
     volume = Math.min(1, Math.max(0, volume))
     @gainNode.gain.value = volume
 
   updatePosition: ->
-    if @isPlaying
+    if @state == ENUM.AudioState.IS_PLAYING
       @position = @ctx.currentTime - @startTime
 
     if @position > @buffer.duration
@@ -97,7 +102,7 @@ class SPACE.WebAudioAPI
     return @position
 
   seek: (time)->
-    if @isPlaying
+    if @state == ENUM.AudioState.IS_PLAYING
       @play(time)
     else
       @position = time
@@ -108,8 +113,6 @@ class SPACE.WebAudioAPI
     @ctx = null
 
   _connect: ->
-    @pause() if @isPlaying
-
     # Setup buffer source
     @src                 = @ctx.createBufferSource()
     @src.buffer          = @buffer
@@ -118,8 +121,10 @@ class SPACE.WebAudioAPI
 
     # Setup analyser
     @analyser = @ctx.createAnalyser()
-    @analyser.smoothingTimeConstant = .3
-    @analyser.fftSize = 512
+    @analyser.smoothingTimeConstant = 0.8
+    @analyser.minDecibels           = -140
+    @analyser.maxDecibels           = 0
+    @analyser.fftSize               = 512
 
     # Setup ScriptProcessor
     @processor = @ctx.createScriptProcessor(2048, 1, 1)
@@ -128,22 +133,15 @@ class SPACE.WebAudioAPI
     @gainNode = @ctx.createGain()
 
     @src.connect(@analyser)
-    # @src.connect(@gainNode)
+    @src.connect(@gainNode)
     @analyser.connect(@processor)
     @processor.connect(@ctx.destination)
-    # @gainNode.connect(@ctx.destination)
+    @gainNode.connect(@ctx.destination)
 
     @processor.onaudioprocess = @_onAudioProcess
     @processor.api = @
 
     @_oldBrowser()
-    @volume(0)
-
-    # TEST
-    @src1        = @ctx.createBufferSource()
-    @src1.buffer = @buffer
-    @src1.connect(@gainNode)
-    @gainNode.connect(@ctx.destination)
 
   _disconnect: ->
     @analyser.disconnect(0)  if @analyser
@@ -152,14 +150,13 @@ class SPACE.WebAudioAPI
   _onAudioProcess: =>
     @onaudioprocess() if @onaudioprocess
 
-  _onEnded: =>
-    @src.disconnect(0)
-    @src1.disconnect(0)
-    @src                      = null
-    @src1                     = null
-    @processor.onaudioprocess = null
-    @isPlaying                = false
-    @onended() if @onended
+  _onEnded: (e)=>
+    if @src and (@state == ENUM.AudioState.IS_STOPPED || @state == ENUM.AudioState.IS_PLAYING)
+      @src.disconnect(0)
+      @src                      = null
+      @processor.onaudioprocess = null
+      @state = ENUM.AudioState.IS_ENDED
+      @onended() if @onended
 
   _oldBrowser: ->
     if @ctx and typeof @ctx.createScriptProcessor != 'function'

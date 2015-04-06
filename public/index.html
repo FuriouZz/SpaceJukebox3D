@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Space Jukebox</title>
+    <title>Bobby Jules</title>
     <meta name="description" content="Space Jukebox">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-touch-fullscreen" content="yes" />
@@ -15,38 +15,26 @@
   </head>
   <body>
     <div id="wrapper">
-      <div id="cover">
-        <ul class="blurried">
-          <li><div style="background-image: url(http://localhost:3000/resources/covers/all_day_720.png);"></div></li>
-          <li><div style="background-image: url(http://localhost:3000/resources/covers/blame_it_on_me_720.png);"></div></li>
-        </ul>
-        <ul class="cards"></ul>
-      </div>
       <div id="information">
+        <span></span>
         <div>
-          <h1></h1>
-          <h2></h2>
+          <h1 class="hidden"></h1>
+          <h2 class="hidden"></h2>
         </div>
       </div>
-      <div class="login">
-        <a href="#">
-          <div>Connect to SoundCloud</div>
-        </a>
+      <div id="loading">
+        <i class="icn play"></i>
+        <p>Please wait...</p>
       </div>
       <footer>
-        <div class="credit">Made by <a href="http://www.christophemassolin.com/">Christophe Massolin</a></div>
+        <div class="credit">Made by <a target="_blank" href="http://www.christophemassolin.com/">Christophe Massolin</a></div>
         <nav class="social">
-          <a href="http://www.facebook.com/1075427885"><i class="icn fb"></i></a>
-          <a href="https://twitter.com/julianmollema"><i class="icn tw"></i></a>
-          <a href="https://instagram.com/bobby.jules/"><i class="icn ig"></i></a>
+          <a target="_blank" href="http://www.facebook.com/1075427885"><i class="icn fb"></i></a>
+          <a target="_blank" href="https://twitter.com/julianmollema"><i class="icn tw"></i></a>
+          <a target="_blank" href="https://instagram.com/bobby.jules/"><i class="icn ig"></i></a>
         </nav>
       </footer>
     </div>
-      <audio class="test" src=""></audio>
-      <a href="#" onclick="window.WebAudioAPI.play(); return false;" style="position: absolute; bottom: 10px; z-index: 3;">aaaaaaa</a>
-
-    <!-- // <script src="//connect.soundcloud.com/sdk.js"></script> -->
-    <script>window.SC || document.write('<script src="vendors/soundcloud/sdk.js"><\/script>')</script>
 
     <script src="vendors/threejs/build/three.js"></script>
     <script src="vendors/threejs/postprocessing/EffectComposer.js"></script>
@@ -56,11 +44,8 @@
     <script src="vendors/threejs/shaders/CopyShader.js"></script>
     <script src="vendors/threejs/shaders/HorizontalBlurShader.js"></script>
     <script src="vendors/threejs/shaders/VerticalBlurShader.js"></script>
-    <!-- // <script src="vendors/dancer.js/dancer.js"></script> -->
-    <!-- // <script src="vendors/soundmanager2/script/soundmanager2-nodebug-jsmin.js"></script> -->
 
     <script src="vendors/jquery/dist/jquery.min.js"></script>
-    <script src="vendors/stats.js/build/stats.min.js"></script>
 
     <script src="assets/scripts/main.js"></script>
 
