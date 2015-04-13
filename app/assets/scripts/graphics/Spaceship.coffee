@@ -86,20 +86,20 @@ class SPACE.Spaceship extends THREE.Group
       when SpaceshipState.IN_LOOP
         # SPACE.LOG('IN_LOOP')
         @_resetTime()
-        @path = @_cached.inLoopPath
-        @duration = @songDuration
+        @path = @testnewloop() #@_cached.inLoopPath
+        @duration = 5 * 1000#@songDuration
 
         v = @path.getPoint(0)
         @ship.position.set(v.x, v.y, v.z)
 
-        @shipRotationZ = @ship.rotation.z
-        $(@ship.rotation).animate({
-          z: 0
-        }, {
-          duration: 500
-          progress: (object)=>
-            @shipRotationZ = object.tweens[0].now
-        })
+        # @shipRotationZ = @ship.rotation.z
+        # $(@ship.rotation).animate({
+        #   z: 0
+        # }, {
+        #   duration: 500
+        #   progress: (object)=>
+        #     @shipRotationZ = object.tweens[0].now
+        # })
       when SpaceshipState.ARRIVED
         # SPACE.LOG('ARRIVED')
         @path = null
@@ -117,14 +117,22 @@ class SPACE.Spaceship extends THREE.Group
         if @state == SpaceshipState.LAUNCHED
           @setState(SpaceshipState.IN_LOOP)
         else if @state == SpaceshipState.IN_LOOP
-          @setState(SpaceshipState.ARRIVED)
+          # console.log 'next move?'
+          @path = @testnewloop()
+          @duration = (5 + (Math.random() * 10)) * 1000
+          # @setState(SpaceshipState.ARRIVED)
         return
 
       if @state == SpaceshipState.LAUNCHED
         @time += delta
         t = _Easing.QuadraticEaseOut(t)
 
-      @_progress(t)
+      # TMP
+      if @state == SpaceshipState.IN_LOOP
+        @time += delta
+        # console.log @time
+
+      @_progress(t) if t
 
   _resetTime: ->
     @time = 0
@@ -138,11 +146,11 @@ class SPACE.Spaceship extends THREE.Group
     @ship.lookAt(v)
 
     if @state == SpaceshipState.LAUNCHED
-      scale = .15 + (1 - t) * .35
+      scale = .25 + (1 - t) * .35
       @ship.scale.set(scale, scale, scale)
 
-    if @state == SpaceshipState.IN_LOOP
-      @ship.rotation.set(@ship.rotation.x, @ship.rotation.y, @shipRotationZ)
+    # if @state == SpaceshipState.IN_LOOP
+    #   @ship.rotation.set(@ship.rotation.x, @ship.rotation.y, @shipRotationZ)
 
   _computePaths: ->
     fromA     = new THREE.Vector3()
@@ -150,7 +158,7 @@ class SPACE.Spaceship extends THREE.Group
     fromA.y   = @target.y + Math.sin(@angle) * 500
     fromA.z   = 600
 
-    path           = new THREE.IncomingCurve(@target, @angle, @radius)
+    path           = new THREE.InLoopCurve(@target, @angle, @radius)
     path.inverse   = true
     path.useGolden = true
 
@@ -166,15 +174,66 @@ class SPACE.Spaceship extends THREE.Group
     curvePoint.z = mid.z
 
     toA    = path.getPoint(0)
-    curve  = new THREE.TestCurve(fromA, curvePoint)
+    curve  = new THREE.LaunchedCurve(fromA, toA)
     points = curve.getPoints(10)
-    points.push(toA)
+    # points.push(toA)
+
+    for pt, i in path.getPoints(10)
+      points.push(pt) if i > 0
 
     curveA = _THREE.HermiteCurve(points)
 
     ## Create path in the loop
-    curveB = _THREE.HermiteCurve(path.getPoints(10))
+    curveB = path#_THREE.HermiteCurve(path.getPoints(10))
+
+    # @_debugPath(curveA)
+    # @_debugPath(curveB)
+
+    # @testnewloop()
+
     return { launchedPath: curveA, inLoopPath: curveB }
+
+  testnewloop: ->
+    THREE.NewLoop = THREE.Curve.create(
+      (v0, radius= 100, startAngle=0)->
+        @v0         = v0
+        @radius     = radius
+        @startAngle = startAngle
+        @randAngle  = Math.random() * Math.PI * 2
+        @direction  = if Math.random() > .5 then true else false
+        @test       = Math.random()
+        return
+      , (t)->
+        t      = 1 - t if @direction
+        angle  = (Math.PI * 2) * t
+        angle  += @startAngle
+
+        vector = new THREE.Vector3()
+        vector.x = @v0.x + Math.cos(angle) * @radius
+        vector.y = @v0.y + Math.cos(angle + @randAngle) * (@radius * 2 * @test)
+        vector.z = @v0.z + Math.sin(angle) * @radius
+        return vector
+
+        # t     = 1 - t if @inverse
+        # if @useGolden
+        #     phi   = (Math.sqrt(5)+1)/2 - 1
+        #     golden_angle = phi * Math.PI * 2
+        #     angle = @startAngle + (golden_angle * t)
+        #     angle += Math.PI * -1.235
+        # else
+        #     angle = @startAngle + (Math.PI * 2 * t)
+
+        # vector = new THREE.Vector3()
+        # vector.x = @v0.x + Math.cos(angle) * (@minRadius + @radius * t)
+        # vector.y = @v0.y + Math.sin(angle) * (@minRadius + @radius * t)
+        # vector.z = @v0.z
+        # return vector
+    )
+
+    newloop = new THREE.NewLoop(@target, 150, Math.PI*-.5)
+    return newloop
+    # @_debugPath(newloop)
+
 
   _debugPath: (path, color=0xFF0000)->
     g    = new THREE.TubeGeometry(path, 200, .5, 10, true)

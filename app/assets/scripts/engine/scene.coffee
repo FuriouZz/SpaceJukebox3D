@@ -1,5 +1,5 @@
 class SPACE.Scene extends THREE.Scene
-  # paused: false
+  _paused: true
 
   constructor: ->
     super
@@ -19,13 +19,21 @@ class SPACE.Scene extends THREE.Scene
       for child in obj.children
         @updateObj(child, delta)
 
-  resize: ->
+  resize: =>
+    for child in @children
+      @resizeObj(child)
+
+  resizeObj: (obj)->
+    obj.resize() if typeof obj.resize == 'function'
+    if obj.hasOwnProperty('children') and obj.children.length > 0
+      for child in obj.children
+        @resizeObj(child)
 
   resume: ->
-    @paused = false
+    @_paused = false
 
   pause: ->
-    @paused = true
+    @_paused = true
 
   isPaused: ->
-    return @paused
+    return @_paused

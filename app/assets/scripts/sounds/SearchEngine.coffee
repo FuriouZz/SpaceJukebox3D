@@ -171,9 +171,12 @@ class SPACE.SearchEngine
 
     @input.value = 'Looking for "'+value+'"'
     @SC.search(value, path, (results)=>
+      console.log results
       if results.length == 0
         @input.value = '"'+value+'" has no result'
         return
+      else
+        @input.value = 'Results for "'+value+'"'
 
       @results     = []
       @listContainer.appendChild(document.createElement('li'))

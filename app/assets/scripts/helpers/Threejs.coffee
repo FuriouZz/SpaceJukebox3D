@@ -40,7 +40,7 @@ THREE.HermiteBezierCurve3 = THREE.Curve.create(
     return vector
 )
 
-THREE.IncomingCurve = THREE.Curve.create(
+THREE.InLoopCurve = THREE.Curve.create(
   (v0, startAngle=0, maxRadius=100, minRadius=0, inverse=false, useGolden=false)->
     @v0         = v0
     @inverse    = inverse
@@ -70,7 +70,7 @@ THREE.IncomingCurve = THREE.Curve.create(
     return vector
 )
 
-THREE.TestCurve = THREE.Curve.create(
+THREE.LaunchedCurve = THREE.Curve.create(
   (v0, v1, nbLoop=2)->
     @v0   = v0
     @v1   = v1

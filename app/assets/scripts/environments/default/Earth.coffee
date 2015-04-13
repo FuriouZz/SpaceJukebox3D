@@ -4,8 +4,8 @@ class Earth extends THREE.Group
     super
 
   setup: ->
-    # g = new THREE.IcosahedronGeometry(100, 5)
-    g = new THREE.SphereGeometry(100, 256, 256)
+    # g = new THREE.IcosahedronGeometry(100, 2)
+    g = new THREE.SphereGeometry(100, 20, 20)
 
     # m = new THREE.MeshLambertMaterial({ color: 0x0088ff, shading: THREE.FlatShading })
     @atts = @attributes()
@@ -15,94 +15,74 @@ class Earth extends THREE.Group
       attributes: @atts
       vertexShader: @vertexShader()
       fragmentShader: @fragmentShader()
+      shading: THREE.FlatShading
+      side: THREE.DoubleSide
     })
 
     @sphere = new THREE.Mesh(g, m)
     # @sphere.scale.set(.5, .5, .5)
-    # @sphere.rotation.set(Math.random(), Math.random(), Math.random())
+    @sphere.rotation.set(Math.random(), Math.random(), Math.random())
     @sphere.castShadow = true
     @sphere.receiveShadow = true
     @add(@sphere)
 
     verts  = @sphere.geometry.vertices
     values = @atts.displacement.value
-
-    setTimeout(=>
-    #   console.log verts.length, SPACE.Jukebox.waveformData.mono.length
-    #   console.log Math.floor(verts.length / SPACE.Jukebox.waveformData.mono.length)
-      @random()
-    , 5000)
+    colors = @atts.mycolor.value
 
     for vertex, i in verts
       values.push(1)
+      colors.push(new THREE.Color(0x0088ff))
 
-    @oldValues = @mute(@sphere.material.attributes.displacement.value.length)
-    @newValues = @mute(@sphere.material.attributes.displacement.value.length)
+  test: =>
+    max = 0
+    for value in SPACE.Jukebox.waveformData.mono
+      max = Math.max(max, value)
+    @setValue(max)
+    setTimeout(@test, 150)
 
-  _time: 0
-  oldValues: null
-  newValues: null
-  setValues: (values)->
-    for i in [0..(@sphere.material.attributes.displacement.value.length-1)]
-      @newValues[i] = Math.random() * .25
+  time: 0
+  newValue: 0
+  setValue: (value)->
+    @newValue = value
+    @reset()
 
-    @newValues = @mute(@sphere.material.attributes.displacement.value.length)
-
-    start = @sphere.material.attributes.displacement.value.length * Math.random()
-    start = Math.floor(start)
-    length = @sphere.material.attributes.displacement.value.length
-    i     = 0
-
-    while i < values.length
-      index = start+i
-      if index > length
-        index -= length
-      @newValues[index] = values[i]
-      @newValues[length - 1 - index] = values[i]
-      i++
-
-    @resetInterpolation()
-
-  resetInterpolation: ->
-    @_time = 0
-
-    @oldValues = @sphere.material.attributes.displacement.value
-
-    if @newValues.length > @oldValues.length
-      for i in [(@oldValues.length)..(@newValues.length-1)]
-        @oldValues[i] = 0
-
-
-  random: (nb=256)=>
-    values = []
-    for i in [0..(nb*5)]
-      values.push(1)
-    @setValues(values)
-    setTimeout(@random, 100)
-    # console.log 'random'
-
-  mute: (nb=256, setValues=false)=>
-    values = []
-    for i in [0..(nb-1)]
-      values.push(0)
-    @setValues(values) if setValues
-    return values
+  reset: ->
+    @time = 0
 
   update: (delta)->
-    @_time += delta
-    t = Math.min(@_time / 150, 1)
+    @time += delta
+    t = Math.min(@time / 5000, 1.0)
 
-    for value, i in @newValues
-      diff = @newValues[i] - @oldValues[i]
-      @sphere.material.attributes.displacement.value[i] = @oldValues[i] + t * diff
+    @time = 0 if t >= 1.0
+
+    @rotation.x += .005
+    @rotation.y -= .005
+    @rotation.z += .005
+
+    values = @sphere.material.attributes.displacement.value
+    length = values.length
+    start  = Math.floor(length * t)
+
+    for value, i in values
+      if i >= start and i < 10+start
+        tt = (i+start) / (9+start)
+        values[i] = tt
+      else
+        values[i] = 0
+
     @sphere.material.attributes.displacement.needsUpdate = true
 
-    # @random()
+    # value = @sphere.material.uniforms.amplitude.value
+    # @sphere.material.uniforms.amplitude.value = value - t * (value - @newValue)#(@oldValue - t * (@oldValue - @newValue))
 
   attributes: ->
     attributes =
       displacement:
         type: 'f'
+        value: []
+      mycolor:
+        type: 'c'
         value: []
 
   uniforms: ->
@@ -117,31 +97,34 @@ class Earth extends THREE.Group
   vertexShader: ->
     return '''
     attribute float displacement;
+    attribute vec3 mycolor;
+    uniform float amplitude;
 
     // Shared variable
     varying vec3 vNormal;
+    varying vec3 vColor;
 
     void main(){
       vNormal = normal;
+      vColor  = mycolor;
 
-      vec3 test = vec3(.5, 0.2, 1.0);
-
-      vec3 newPosition = position + normal * displacement * 100.0;
+      vec3 newPosition = position + normal * displacement * 2.0;
       vec4 pos = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-      gl_Position = pos * max(0.0, dot(normal, test));
+      gl_Position = pos;
     }
     '''
 
   fragmentShader: ->
     return '''
     varying vec3 vNormal;
+    varying vec3 vColor;
 
     void main() {
       vec3 light       = vec3(0.5, 0.2, 1.0);
       light            = normalize(light);
       float dotProduct = max(0.0, dot(vNormal, light));
 
-      vec3 color       = vec3(1.0, 1.0, 1.0) * dotProduct;
-      gl_FragColor     = vec4(color, 1.0 - dotProduct);
+      vec3 color       = vColor * dotProduct;
+      gl_FragColor     = vec4(color, 1.0);
     }
     '''

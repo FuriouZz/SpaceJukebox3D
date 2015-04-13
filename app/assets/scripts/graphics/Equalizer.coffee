@@ -4,7 +4,6 @@ class SPACE.Equalizer extends THREE.Group
 
   _values:    null
   _newValues: null
-  _oldValues: null
 
   _time:      1
 
@@ -25,7 +24,7 @@ class SPACE.Equalizer extends THREE.Group
   maxNbValues:       512
   mirror:            true
 
-  constructor: (point, opts={})->
+  constructor: (opts={})->
     super
 
     # Set parameters
@@ -54,12 +53,20 @@ class SPACE.Equalizer extends THREE.Group
     @mirror            = opts.mirror
 
     # Set values
-    @center     = point
+    @center     = new THREE.Vector3()
     @_values    = @mute(false)
-    @_oldValues = @mute(false)
     @_newValues = @mute(false)
 
     @generate()
+
+    @_events()
+    @updateValues()
+
+  _events: ->
+    document.addEventListener(TRACK.IS_STOPPED.type, @_eTrackIsStopped)
+
+  _eTrackIsStopped: =>
+    @mute()
 
   setNbValues: (nbValues)->
     @nbValues = nbValues
@@ -95,14 +102,17 @@ class SPACE.Equalizer extends THREE.Group
     return if t > 1
 
     for i in [0..(@maxNbValues-1)]
-      diff        = @_oldValues[i] - @_newValues[i]
-      @_values[i] = @_oldValues[i] - t * diff
+      diff        = @_values[i] - @_newValues[i]
+      @_values[i] = @_values[i] - t * diff
+
     @updateGeometries()
 
-  updateGeometries: (create=false)->
-    if @test
-      console.log @_values.length, @_oldValues.length, @_newValues.length
+  updateValues: =>
+    if SPACE.Jukebox.state == JukeboxState.IS_PLAYING and SPACE.Jukebox.waveformData.mono
+      @setValues(SPACE.Jukebox.waveformData.mono)
+    setTimeout(@updateValues, @interpolationTime * .5)
 
+  updateGeometries: (create=false)->
     for length, i in @_values
       angle  = Math.PI * 2 * i / @nbValues
 
@@ -139,12 +149,6 @@ class SPACE.Equalizer extends THREE.Group
 
   resetInterpolation: ->
     @_time = 0
-    @_oldValues = @_values
-    @_values    = @mute(false)
-
-    if @_newValues.length > @_oldValues.length
-      for i in [(@_oldValues.length)..(@_newValues.length-1)]
-        @_oldValues[i] = 0
 
   computePosition: (point, angle, length)->
     x = point.x + Math.sin(angle) * length

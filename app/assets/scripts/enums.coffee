@@ -17,6 +17,16 @@ SearchEngineState =
   SEARCH: 'search'
   TRACK_SELECTED: 'track_selected'
 
+JukeboxState =
+  IS_PLAYING: 'is_playing'
+  IS_STOPPED: 'is_stopped'
+
+AirportState =
+  IDLE: 'idle'
+  SENDING: 'sending'
+
 Object.freeze(Keyboard)
 Object.freeze(SpaceshipState)
 Object.freeze(SearchEngineState)
+Object.freeze(JukeboxState)
+Object.freeze(AirportState)

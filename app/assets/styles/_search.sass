@@ -3,20 +3,23 @@ $transformDuration: 250ms
 $height: 60px
 
 .search
-  =harcAcc
+  // =harcAcc
   +transition(transform $transformDuration ease-in 0ms, background-color 250ms linear 250ms)
   +position(absolute, 0 0 0 0)
   width: 100%
   height: $height
   margin: auto
-  +transform(scaleY(1))
+  +transform(scaleY(1) translate(0, 0))
   background-color: rgba(255, 255, 255, .75)
   font-family: "Source Sans Pro"
   -webkit-font-smoothing: antialiased
   color: #424a52
   text-align: center
   line-height: 0
-  z-index: 1
+  z-index: 10
+
+  &.search_open
+    +transform(scaleY(1) translate(0, 0))
 
   &.item_selected
     +transition(background-color 0ms)
@@ -24,7 +27,7 @@ $height: 60px
 
   &.hidden
     +transition(transform $transformDuration ease-in $opacityDuration)
-    +transform(scaleY(0))
+    +transform(scaleY(0) translate(0, 0))
     input
       +transition(opacity $opacityDuration ease-in 0ms)
       opacity: 0
@@ -69,12 +72,12 @@ $height: 60px
     line-height: initial
 
   ul
-    =harcAcc
+    // =harcAcc
     +transition(transform 250ms)
     line-height: 0
 
   li
-    =harcAcc
+    // =harcAcc
     +transition(transform 250ms, background-color 250ms, width 250ms)
     +size(100% $height)
     +inline-block

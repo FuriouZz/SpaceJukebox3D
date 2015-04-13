@@ -29,20 +29,24 @@ class SPACE.Track
     if @isPlaying
       @time += delta
 
-    if @pendingDuration > 0 and (@pendingDuration - @time) < 60*60*1000 and @spaceship.state == SpaceshipState.IDLE and @isPlaying
-      SPACE.LOG('Spaceship launched : '+@data.title)
-      @spaceship.setState(SpaceshipState.LAUNCHED)
+    # if @pendingDuration > 0 and (@pendingDuration - @time) < 60*60*1000 and @spaceship.state == SpaceshipState.IDLE and @isPlaying
+    #   SPACE.LOG('Spaceship launched : '+@data.title)
+    #   @spaceship.setState(SpaceshipState.LAUNCHED)
 
     if @spaceship.state == SpaceshipState.LAUNCHED
       @spaceship.songDuration = (@pendingDuration - @time)
 
-    if @spaceship.state == SpaceshipState.IN_LOOP
-      @spaceship.time = @spaceship.songDuration - (@pendingDuration - @time)
+    # if @spaceship.state == SpaceshipState.IN_LOOP
+    #   @spaceship.time = @spaceship.songDuration - (@pendingDuration - @time)
 
     if @spaceship.state == SpaceshipState.ARRIVED
       @isPlaying = false
 
-    @spaceship.update(delta)
+    @spaceship.update(delta)# if @spaceship.state == SpaceshipState.LAUNCHED
+
+  removeSpaceship: ->
+    parent = @spaceship.parent
+    parent.remove(@spaceship)
 
   stream: ->
     @SC.streamSound(@data, {

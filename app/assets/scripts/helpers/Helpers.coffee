@@ -1,7 +1,12 @@
-_H = _H || {
+window.HELPER = window.HELPER ||
+  events: {}
 
-  # Event
-  trigger: (e, object)->
+  trigger: (eventname, object)->
+    console.log eventname
+    unless @events.hasOwnProperty(eventname)
+      @events[eventname] = new Event(eventname)
+
+    e = @events[eventname]
     e.object = object
     document.dispatchEvent(e)
 
@@ -26,5 +31,3 @@ _H = _H || {
     else if typeof value is 'number'
       return value * window.devicePixelRatio
     return false
-
-}

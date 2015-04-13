@@ -4,7 +4,7 @@ class SPACE.SoundCloud
   redirect_uri: null
   token:        null
 
-  @IS_CONNECTED: (-> return new Event('soundcloud_connected'))()
+  @IS_CONNECTED: 'soundcloud_connected'#(-> return new Event('soundcloud_connected'))()
 
   constructor: (id, redirect_uri)->
     SC.initialize({
@@ -15,15 +15,9 @@ class SPACE.SoundCloud
     @client_id    = id
     @redirect_uri = redirect_uri
 
-    # soundManager.setup({
-    #   url:
-    #   autoPlay: true
-    #   useWaveformData: true
-    #   useHTML5audio: true
-    #   preferFlash: false
-    #   flash9Options:
-    #     useWaveformData: true
-    # })
+    if not @isConnected() and SPACE.ENV == 'development'
+      document.cookie = "soundcloud_token=1-80269-11457116-04029a14bdfc286"
+      document.cookie = "soundcloud_connected=true"
 
   isConnected: ->
     if (document.cookie.replace(/(?:(?:^|.*;\s*)soundcloud_connected\s*\=\s*([^;]*).*$)|^.*$/, "$1") != "true")
@@ -40,7 +34,7 @@ class SPACE.SoundCloud
       document.cookie = "soundcloud_token=" + @token
       document.cookie = "soundcloud_connected=true"
       document.querySelector('.login').classList.remove('show')
-      _H.trigger(SPACE.SoundCloud.IS_CONNECTED)
+      HELPER.trigger(SPACE.SoundCloud.IS_CONNECTED)
     )
 
   pathOrUrl: (path, callback)->
@@ -71,13 +65,6 @@ class SPACE.SoundCloud
 
       options = _Coffee.merge(defaults, options)
       SC.stream(path, options, callback)
-      # soundManager.flash9Options.useWaveformData = true
-
-      # @getSoundUrl(path, (url)->
-      #   options.url = url
-      #   sound = soundManager.createSound(options)
-      #   callback(sound)
-      # )
 
   getSoundOrPlaylist: (path, callback)->
     if typeof path == 'object' and path.hasOwnProperty('kind')

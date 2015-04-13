@@ -3,14 +3,14 @@ SPACE = SPACE || {}
 SPACE.ENV        = 'development'
 
 # PIXI.JS
-SPACE.FPS        = 60
+SPACE.FPS        = 30
 SPACE.pixelRatio = (window.devicePixelRatio || 1)
 
 # THREE.JS
 SPACE.THREE = {}
 
 # SOUNDCLOUD
-SPACE.SOUNDCLOUD = (->
+SPACE.SC = (->
   object = {}
   if SPACE.ENV == 'development'
     object.id = 'de0b8539b4ad2f6cc23dfe1cc6e0438d'

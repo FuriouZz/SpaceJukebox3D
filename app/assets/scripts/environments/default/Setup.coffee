@@ -16,7 +16,11 @@ class Setup extends THREE.Group
   update: (delta)->
 
   setup: ->
-    earth = new SPACE.DEFAULT.Earth()
+    # earth = new SPACE.DEFAULT.Earth()
+    # earth.setup()
+    # @add(earth)
+
+    earth = new SPACE.DEFAULT.Icosahedron()
     earth.setup()
     @add(earth)
 
