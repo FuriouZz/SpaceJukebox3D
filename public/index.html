@@ -3,11 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href='styles/source_sans_pro.css' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="styles/main.css">
+    <title>Space Jukebox</title>
+    <meta name="description" content="Space Jukebox">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="assets/styles/source_sans_pro.css">
+    <link rel="stylesheet" type="text/css" href="assets/styles/main.css">
   </head>
   <body>
     <div id="wrapper">
@@ -24,39 +27,25 @@
           <ul></ul>
         </div>
       </div>
+
+      <a href="#" onclick="window.AudioAPI.play(); return false;" style="position:absolute; bottom: 10px; left: 10px;z-index:100">Hello</a>
+
+
     </div>
 
-    <!-- // <script src="//connect.soundcloud.com/sdk.js"></script> -->
+    <script src="//connect.soundcloud.com/sdk.js"></script>
     <script>window.SC || document.write('<script src="vendors/soundcloud/sdk.js"><\/script>')</script>
-
     <script src="vendors/threejs/build/three.js"></script>
-    <!-- // <script src="vendors/soundmanager2/script/soundmanager2-nodebug-jsmin.js"></script> -->
     <script src="vendors/jquery/dist/jquery.min.js"></script>
     <script src="vendors/stats.js/build/stats.min.js"></script>
 
-    <script src="scripts/config.js"></script>
-    <script src="scripts/events.js"></script>
-    <script src="scripts/enums.js"></script>
+    <script src="vendors/waveformjs/waveform.js"></script>
 
-    <script src="scripts/helpers/Helpers.js"></script>
-    <script src="scripts/helpers/Coffee.js"></script>
-    <script src="scripts/helpers/Maths.js"></script>
-    <script src="scripts/helpers/Threejs.js"></script>
-    <script src="scripts/helpers/Easing.js"></script>
+    <script src="assets/scripts/main.js"></script>
 
-    <script src="scripts/engine/Scene.js"></script>
-    <script src="scripts/engine/Manager.js"></script>
+    <span id="test"></span>
 
-    <script src="scripts/scenes/Main.js"></script>
 
-    <script src="scripts/sounds/Soundcloud.js"></script>
-    <script src="scripts/sounds/SearchEngine.js"></script>
-    <script src="scripts/sounds/Jukebox.js"></script>
-    <script src="scripts/sounds/Track.js"></script>
 
-    <script src="scripts/graphics/Equalizer.js"></script>
-    <script src="scripts/graphics/Spaceship.js"></script>
-
-    <script src="scripts/app.js"></script>
   </body>
 </html>
