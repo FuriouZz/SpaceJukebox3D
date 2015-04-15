@@ -28,14 +28,43 @@
         </div>
       </div>
 
-      <a href="#" onclick="window.AudioAPI.play(); return false;" style="position:absolute; bottom: 10px; left: 10px;z-index:100">Hello</a>
-
+      <div id="information">
+        <span></span>
+        <div>
+          <h1 class="hidden"></h1>
+          <h2 class="hidden"></h2>
+        </div>
+      </div>
+      <div id="loading">
+        <i class="icn play"></i>
+        <p>Please wait...</p>
+      </div>
+      <footer>
+        <div class="credit">Made by <a target="_blank" href="http://www.christophemassolin.com/">Christophe Massolin</a></div>
+        <nav class="social">
+          <a target="_blank" href="http://www.facebook.com/1075427885"><i class="icn fb"></i></a>
+          <a target="_blank" href="https://twitter.com/julianmollema"><i class="icn tw"></i></a>
+          <a target="_blank" href="https://instagram.com/bobby.jules/"><i class="icn ig"></i></a>
+        </nav>
+      </footer>
 
     </div>
 
+
+
+
     <script src="//connect.soundcloud.com/sdk.js"></script>
     <script>window.SC || document.write('<script src="vendors/soundcloud/sdk.js"><\/script>')</script>
+    
     <script src="vendors/threejs/build/three.js"></script>
+    <script src="vendors/threejs/postprocessing/EffectComposer.js"></script>
+    <script src="vendors/threejs/postprocessing/Maskpass.js"></script>
+    <script src="vendors/threejs/postprocessing/RenderPass.js"></script>
+    <script src="vendors/threejs/postprocessing/ShaderPass.js"></script>
+    <script src="vendors/threejs/shaders/CopyShader.js"></script>
+    <script src="vendors/threejs/shaders/HorizontalBlurShader.js"></script>
+    <script src="vendors/threejs/shaders/VerticalBlurShader.js"></script>
+    
     <script src="vendors/jquery/dist/jquery.min.js"></script>
     <script src="vendors/stats.js/build/stats.min.js"></script>
 
