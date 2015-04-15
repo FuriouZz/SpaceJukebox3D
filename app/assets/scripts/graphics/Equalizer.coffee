@@ -7,6 +7,8 @@ class SPACE.Equalizer extends THREE.Group
 
   _time:      1
 
+  _jukebox: null
+
   # THREE
   material:   null
   lines:      null
@@ -19,6 +21,7 @@ class SPACE.Equalizer extends THREE.Group
   color:             0xFFFFFF
   lineForceUp:       .5
   lineForceDown:     .5
+  linewidth:         0
   absolute:          false
   nbValues:          0
   maxNbValues:       512
@@ -39,6 +42,7 @@ class SPACE.Equalizer extends THREE.Group
       absolute:          false
       nbValues:          256 # Maximum 512 values
       mirror:            true
+      linewidth:         2
 
     opts               = _Coffee.merge(defaults, opts)
     @minLength         = opts.minLength
@@ -51,12 +55,15 @@ class SPACE.Equalizer extends THREE.Group
     @absolute          = opts.absolute
     @nbValues          = opts.nbValues
     @mirror            = opts.mirror
+    @linewidth         = opts.linewidth
 
     # Set values
+    @_jukebox   = SPACE.SceneManager.currentScene._jukebox
     @center     = new THREE.Vector3()
     @_values    = @mute(false)
     @_newValues = @mute(false)
-
+    @setRadius(@radius)
+    
     @generate()
 
     @_events()
@@ -67,6 +74,10 @@ class SPACE.Equalizer extends THREE.Group
 
   _eTrackIsStopped: =>
     @mute()
+
+  setRadius: (radius)-> 
+    @radius = radius 
+    @radius = window.innerWidth * 0.6 if window.innerWidth - 100 < radius 
 
   setNbValues: (nbValues)->
     @nbValues = nbValues
@@ -90,13 +101,16 @@ class SPACE.Equalizer extends THREE.Group
   generate: ->
     @mute()
 
-    @material   = new THREE.LineBasicMaterial({ color: @color, linewidth: 4 })
+    @material   = new THREE.LineBasicMaterial({ color: @color, linewidth: @linewidth })
     @lines      = []
 
-    @update(0)
+    @refresh(0)
     @updateGeometries(true)
 
   update: (delta)->
+    @refresh(delta)
+
+  refresh: (delta)->
     @_time += delta
     t = @_time / @interpolationTime
     return if t > 1
@@ -104,13 +118,12 @@ class SPACE.Equalizer extends THREE.Group
     for i in [0..(@maxNbValues-1)]
       diff        = @_values[i] - @_newValues[i]
       @_values[i] = @_values[i] - t * diff
-
     @updateGeometries()
 
   updateValues: =>
-    if SPACE.Jukebox.state == JukeboxState.IS_PLAYING and SPACE.Jukebox.waveformData.mono
-      @setValues(SPACE.Jukebox.waveformData.mono)
-    setTimeout(@updateValues, @interpolationTime * .5)
+    if @_jukebox.current and @_jukebox.current.state == SPACE.Track.IS_PLAYING
+      @setValues(@_jukebox.current.timedata)
+    setTimeout(@updateValues, @interpolationTime * 0.15)
 
   updateGeometries: (create=false)->
     for length, i in @_values
@@ -158,3 +171,7 @@ class SPACE.Equalizer extends THREE.Group
   removeLineFromParent: (index)->
     parent = @lines[index]
     parent.remove(@lines[index])
+
+  resize: -> 
+    @setRadius(@radius) 
+      

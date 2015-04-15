@@ -7,18 +7,18 @@ class SPACE.Jukebox
   # Properties
   current:      null
   playlist:     null
-  searchEngine: null
+  # searchEngine: null
   SC:           null
 
   state:     null
 
-  _nextDelay: 0
+  _nextDelay: 100
   _nextTimeout: null
   _refreshDelay: 1000
 
   constructor: ->
     @playlist     = []
-    @searchEngine = new SPACE.SearchEngine()
+    # @searchEngine = new SPACE.SearchEngine()
     @SC           = SPACE.SC
 
     @inputType    = 'WebAudioAPI'

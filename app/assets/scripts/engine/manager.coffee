@@ -59,6 +59,7 @@ class SPACE.SceneManager
     @renderer.setSize(window.innerWidth, window.innerHeight)
     @camera.aspect = window.innerWidth / window.innerHeight
     @camera.updateProjectionMatrix()
+    @currentScene.resize() if @currentScene
 
   _setupStats: ->
     @_stats = new Stats()

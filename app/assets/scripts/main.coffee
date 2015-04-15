@@ -20,9 +20,6 @@
 #= require sounds/WebAudioAPI.coffee
 
 #= require graphics/Equalizer.coffee
-#= require graphics/Spaceship.coffee
-
-#= require environments/default/Setup.coffee
-#= require environments/default/Cover.coffee
+#= require graphics/Cover.coffee
 
 #= require app.coffee

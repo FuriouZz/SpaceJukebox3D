@@ -29,6 +29,7 @@ class SPACE.Track
   constructor: ->
     @_SC      = SPACE.SC
     @_APIType = SPACE.Track.APIType.WebAudioAPI
+    @_resetTimedata()
     @setState(SPACE.Track.IS_WAITING)
 
   #
@@ -43,13 +44,15 @@ class SPACE.Track
       when SPACE.Track.IS_WAITING
         HELPER.trigger(SPACE.Track.IS_WAITING, { track: this })
       when SPACE.Track.WILL_PLAY
-        @timedata = Array(256)
+        @_resetTimedata()
         HELPER.trigger(SPACE.Track.WILL_PLAY, { track: this })
       when SPACE.Track.IS_PLAYING
         HELPER.trigger(SPACE.Track.IS_PLAYING, { track: this })
       when SPACE.Track.IS_PAUSED
+        @_resetTimedata()
         HELPER.trigger(SPACE.Track.IS_PAUSED, { track: this })
       when SPACE.Track.IS_STOPPED
+        @_resetTimedata()
         HELPER.trigger(SPACE.Track.IS_STOPPED, { track: this })
 
   #
@@ -158,3 +161,8 @@ class SPACE.Track
       whileloading : =>
         @_onloadingprogress(@_API.bytesLoaded / @_API.bytesTotal)
     }, @_onstart)
+
+  _resetTimedata: ->
+    @timedata = Array(256)
+    for i in [0..255]
+      @timedata[i] = 0
