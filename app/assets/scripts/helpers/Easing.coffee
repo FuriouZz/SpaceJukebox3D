@@ -1,4 +1,4 @@
-_Easing = _Easing || {
+HELPER.Easing = {
 
   #
   #  Easing function inspired from AHEasing

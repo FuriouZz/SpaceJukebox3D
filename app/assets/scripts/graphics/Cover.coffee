@@ -16,7 +16,7 @@ class SPACE.Cover extends THREE.Group
   aspect: 0
   distance: 0
 
-  tFade: 1
+  tMove: 1
   tScale: 1
 
   constructor: ->
@@ -123,7 +123,7 @@ class SPACE.Cover extends THREE.Group
         texture3: { type: 't', value: new THREE.Texture() }
         resolution: { type: 'v2', value: new THREE.Vector2() }
         aTime: { type: 'f', value: 0 }
-        tFade: { type: 'f', value: 0 }
+        tMove: { type: 'f', value: 0 }
         tScale: { type: 'f', value: 1 }
         ratio: { type: 'v2', value: new THREE.Vector2() }
       attributes: 
@@ -151,10 +151,7 @@ class SPACE.Cover extends THREE.Group
       @texture0 = @texture1 = null
 
   setCovers: (current, next)->
-    @tFade  = 1
-    @tScale = 0.75
-    @plane.material.uniforms.tScale.value = @tScale
-    @plane.material.uniforms.tFade.value  = @tFade
+    @_resetTimeline()
 
     @plane.material.uniforms.texture0.value = current
     @plane.material.uniforms.texture1.value = next
@@ -221,9 +218,32 @@ class SPACE.Cover extends THREE.Group
     @_renderToTexture(texture1.image.src, @rt1)
 
   next: ->
-    $(@plane.material.uniforms.tScale).animate({ value: 0.9 }, 350)
-    $(@plane.material.uniforms.tFade).animate({ value: 0.0 }, 350)
-    setTimeout(@_eTransitionEnded, 350)
+    @_resetTimeline()
+    $(this).animate({ tScale: 0.75 },
+      duration: 500
+      easing: 'easeOutExpo'
+      progress: ->
+        value = @tScale
+        @plane.material.uniforms.tScale.value = value
+    ).animate({ tMove: 1 },
+      duration: 750
+      easing: 'easeOutExpo'
+      progress: ->
+        value = @tMove
+        @plane.material.uniforms.tMove.value  = value
+    ).animate({ tScale: 1 },
+      duration: 500
+      easing: 'easeOutExpo'
+      progress: ->
+        value = @tScale
+        @plane.material.uniforms.tScale.value = value
+    )
+
+  _resetTimeline: ->
+    @tScale                               = 1.0
+    @tMove                                = 0.0
+    @plane.material.uniforms.tScale.value = 1.0
+    @plane.material.uniforms.tMove.value  = 0.0
 
   update: (delta)->
     if @plane
