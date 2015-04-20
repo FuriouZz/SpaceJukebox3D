@@ -40,11 +40,11 @@ class SPACE.Equalizer extends THREE.Group
       lineForceUp:       .5
       lineForceDown:     .5
       absolute:          false
-      nbValues:          256 # Maximum 512 values
+      nbValues:          512 # Maximum 512 values
       mirror:            true
       linewidth:         2
 
-    opts               = _Coffee.merge(defaults, opts)
+    opts               = HELPER.Coffee.merge(defaults, opts)
     @minLength         = opts.minLength
     @maxLength         = opts.maxLength
     @radius            = opts.radius
@@ -121,8 +121,8 @@ class SPACE.Equalizer extends THREE.Group
     @updateGeometries()
 
   updateValues: =>
-    if @_jukebox.current and @_jukebox.current.state == SPACE.Track.IS_PLAYING
-      @setValues(@_jukebox.current.timedata)
+    if @_jukebox.current and @_jukebox.current.state == Track.IS_PLAYING
+      @setValues(@_jukebox.current.getTimedata())
     setTimeout(@updateValues, @interpolationTime * 0.15)
 
   updateGeometries: (create=false)->

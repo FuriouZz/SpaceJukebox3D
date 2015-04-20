@@ -1,4 +1,4 @@
-_Coffee = _Coffee || {
+HELPER.Coffee =
   # Array
   shuffle: (array)->
     tmp
@@ -19,4 +19,3 @@ _Coffee = _Coffee || {
     for key, val of properties
       object[key] = val
     object
-}

@@ -13,7 +13,8 @@ class SPACE.MainScene extends SPACE.Scene
 
     # Setup renderer
     @_manager.camera.position.setZ(600)
-    # @_manager.renderer.setPixelRatio(window.devicePixelRatio)
+    # @_manager.setPixelRatio(window.devicePixelRatio)
+
     # @_manager.renderer.setClearColor(new THREE.Color(0x58b1ff))
     # @_manager.renderer.shadowMapEnabled = true
     # @_manager.renderer.shadowMapSoft    = true
@@ -23,21 +24,27 @@ class SPACE.MainScene extends SPACE.Scene
     SPACE.SC = new SPACE.SoundCloud(SPACE.SC.id, SPACE.SC.redirect_uri)
 
     @_events()
-    @_setup() if SPACE.SC.isConnected()
+    @_setup()
 
   pause: ->
 
   _events: ->
     document.addEventListener(SPACE.SoundCloud.IS_CONNECTED, @_eSCIsConnected)
+    document.addEventListener(SPACE.CoverController.PLAYLIST_LOADED, @_ePlaylistLoaded)
 
   _eSCIsConnected: =>
-    @_setup()
+    @_fillJukebox()
+
+  _ePlaylistLoaded: =>
+    @_fillJukebox() if SPACE.SC.isConnected()
 
   _setup: =>
     window.firstLaunch = true
 
     # Setup Jukebox
-    @_jukebox = new SPACE.Jukebox()
+    @_jukebox = new Jukebox()
+    SPACE.Jukebox = @_jukebox
+    # @_jukebox.add('resources/sounds/all_day.mp3', true)
     # @_jukebox.add('https://soundcloud.com/bon-entendeur-music/lafierte')
 
     # Setup equalizers
@@ -66,12 +73,9 @@ class SPACE.MainScene extends SPACE.Scene
     @add(big)
 
     # Setup cover
-    @cover = new SPACE.Cover()
-    @add(@cover)
+    @cover = new SPACE.CoverController()
+    @add(@cover.view)
 
-    req = new XMLHttpRequest()
-    req.open('GET', 'resources/playlist.json', true)
-    req.onload = (e)=>
-      @playlist = JSON.parse(e.target.response)
-      @cover.load(@playlist)
-    req.send()
+  _fillJukebox: =>
+    for track, i in @cover.playlist
+      @_jukebox.add(track.url)

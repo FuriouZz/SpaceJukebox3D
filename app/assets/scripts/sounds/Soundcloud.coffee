@@ -63,7 +63,7 @@ class SPACE.SoundCloud
         useHTML5audio: true
         preferFlash: false
 
-      options = _Coffee.merge(defaults, options)
+      options = HELPER.Coffee.merge(defaults, options)
       SC.stream(path, options, callback)
 
   getSoundOrPlaylist: (path, callback)->

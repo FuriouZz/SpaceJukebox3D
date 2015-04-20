@@ -1,0 +1,170 @@
+#playlist {
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  position: absolute;
+  bottom: 35px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 3;
+  @include transition(all 500ms 1000ms, width 500ms, height 500ms 500ms);
+
+  ul, li {
+    margin: 0;
+    padding: 0;
+  }
+
+  ul {
+    width: 100%;
+    height: calc(100% - 50px);
+    overflow: auto;
+    position: absolute;
+    bottom: 51px;
+    margin-bottom: 0;
+    @include transition(height 500ms 500ms, bottom 500ms 500ms, margin-bottom 500ms 500ms);
+  }
+
+  li {
+    display: block;
+    width: 100%;
+    max-width: 260px;
+    height: 50px;
+    position: relative;
+    margin: 1px 0;
+    padding: 0 20px;
+    vertical-align: middle;
+    background-color: rgba(255, 255, 255, 0.5);
+    @include transition(all 500ms 500ms, max-width 250ms 1000ms, background-color 500ms 1000ms);
+  }
+
+  li.active {
+    background-color: rgba(255, 255, 255, 0.75);
+  }
+
+  // li:hover {
+  //   background-color: rgba(255, 255, 255, 0.65);
+  //   @include transition(background-color 500ms 0s);
+  // }  
+
+  li.active:hover {
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+
+  li:first-child {
+    margin-top: 0;
+  }
+
+  li:last-child {
+    margin-bottom: 0;
+  }
+
+  li span {
+    display: inline-block;
+    height: 18px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    color: #5d6165;
+    font-size: 15px;
+    letter-spacing: 0.020em;
+    opacity: 1;
+    @include transition(all 500ms 1000ms);
+  }
+
+  span.title {
+    width: 180px;
+    left: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span.number {
+    color: #b5babe;
+    left: 20px;
+  }
+
+  span.duration {
+    right: 20px;
+  }
+
+  .close {
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    color: #5d6165;
+    font-size: 15px;
+    letter-spacing: 0.020em;
+    background-color: rgba(255, 255, 255, 1);
+    cursor: pointer;
+    @include transition(all 500ms 1000ms);
+  }
+
+  .close:before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+  }
+
+  span {
+    opacity: 1;
+    @include transition(opacity 500ms 1000ms);
+  }
+
+  .open {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    visibility: hidden;
+    cursor: pointer;
+    @include transition(visibility 0s 0s);
+  }
+
+}
+
+#playlist.hidden {
+  background-color: transparent;
+  width: 18px;
+  height: 28px;
+  @include transition(all 500ms, width 500ms 1000ms, height 500ms 500ms);
+
+  span {
+    opacity: 0;
+    @include transition(opacity 500ms);
+  }
+
+  ul {
+    height: 100px;
+    bottom: 0;
+    margin-bottom: -88px;
+    @include transition(height 500ms 500ms, bottom 500ms 500ms, margin-bottom 500ms 500ms);
+  }
+
+  .close {
+    @include transition(all 500ms 500ms);
+  }
+
+  li {
+    max-width: 100%;
+    padding: 0;
+    margin-bottom: 3px;
+    background-color: white;
+    @include transition(all 500ms 500ms, max-width 250ms 250ms, background-color 500ms 0s);
+  }
+
+  li, .close {
+    height: 2px;
+  }
+
+  .open {
+    visibility: visible;
+    @include transition(visibility 0s 1s);
+  }
+}

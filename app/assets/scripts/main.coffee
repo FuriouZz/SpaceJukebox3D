@@ -15,11 +15,13 @@
 
 #= require sounds/Soundcloud.coffee
 #= require sounds/SearchEngine.coffee
-#= require sounds/Jukebox2.coffee
-#= require sounds/Track2.coffee
+#= require sounds/Jukebox.coffee
+#= require sounds/Track.coffee
 #= require sounds/WebAudioAPI.coffee
 
-#= require graphics/Equalizer.coffee
-#= require graphics/Cover.coffee
+#= require views/Equalizer.coffee
+#= require views/Cover.coffee
+#= require views/CoverController.coffee
+#= require views/Playlist.coffee
 
 #= require app.coffee

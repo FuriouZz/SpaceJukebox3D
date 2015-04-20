@@ -130,7 +130,7 @@ class WebAudioAPI
       @setState(WebAudioAPI.IS_STOPPED)
       @onstop() if @onstop
 
-  volume: (volume)->
+  setVolume: (volume)->
     volume = Math.min(1, Math.max(0, volume))
     @gainNode.gain.value = volume
 
@@ -150,7 +150,7 @@ class WebAudioAPI
     else
       @position = time
 
-  destroy: ->
+  destruct: ->
     @stop()
     @_disconnect()
     @ctx = null

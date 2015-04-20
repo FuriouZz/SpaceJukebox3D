@@ -2,7 +2,7 @@ window.HELPER = window.HELPER ||
   events: {}
 
   trigger: (eventname, object)->
-    console.log eventname
+    # console.log eventname
     unless @events.hasOwnProperty(eventname)
       @events[eventname] = new Event(eventname)
 

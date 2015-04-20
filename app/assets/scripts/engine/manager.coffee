@@ -12,34 +12,9 @@ class SPACE.SceneManager
     @_setup()
     @_events()
 
-    # if (@renderer) then return @
-
-    # @_clock = new THREE.Clock()
-
-    # @_scenes   = []
-
-    # @camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    # # @camera.position.setZ(600)
-    # # @camera.position.setY(500)
-    # # @camera.lookAt(new THREE.Vector3(0, 0, 0))
-
-    # @renderer = new THREE.WebGLRenderer({antialias: true})
-    # # @renderer.setClearColor(new THREE.Color(0x58b1ff))
-    # @renderer.setSize(window.innerWidth, window.innerHeight)
-    # # @renderer.shadowMapEnabled = true
-    # # @renderer.shadowMapSoft    = true
-    # # @renderer.shadowMapType    = THREE.PCFShadowMap
-    # document.getElementById('wrapper').appendChild(@renderer.domElement)
-
-    # @_setupStats() if SPACE.ENV == 'development'
-
-    # @_render()
-    # # @_update()
-
-    # # window.onresize = =>
-    # #   @renderer.setSize(window.innerWidth, window.innerHeight)
-    # #   @camera.aspect = window.innerWidth / window.innerHeight
-    # #   @camera.updateProjectionMatrix()
+  setPixelRatio: (pixelRatio)->
+    @renderer.setPixelRatio(pixelRatio)
+    @renderer.setSize(window.innerWidth, window.innerHeight)
 
   _setup: ->
     @_clock  = new THREE.Clock()

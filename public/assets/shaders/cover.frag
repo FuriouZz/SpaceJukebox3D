@@ -5,14 +5,14 @@ varying vec2 vT1Coords;
 
 uniform sampler2D texture0;
 uniform sampler2D texture1;
-uniform sampler2D texture2;
-uniform sampler2D texture3;
-uniform vec2 ratio;
-uniform vec2 resolution;
+uniform sampler2D blurried0;
+uniform sampler2D blurried1;
+// uniform vec2 ratio;
+// uniform vec2 resolution;
 
 uniform float tMove;
 uniform float tScale;
-uniform float aTime;
+// uniform float aTime;
 
 vec2 scaleUV(float value, vec2 uv) {
     vec2 scaledUV = uv;
@@ -51,7 +51,7 @@ void main(void) {
         t0UV = scaleUV(scale, vT0Coords);
         t1UV = scaleUV(scale, vT1Coords);
 
-        c = mix(texture2D(texture2, t0UV), texture2D(texture3, t1UV), smoothstep(1.0-diffuse, 1.0, t));
+        c = mix(texture2D(blurried0, t0UV), texture2D(blurried1, t1UV), smoothstep(1.0-diffuse, 1.0, t));
 
         if (any(lessThan(t0UV, vec2(0.0))) || any(greaterThan(t0UV, vec2(1.0)))) {
             c = vec4(0.0);
